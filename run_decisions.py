@@ -33,7 +33,7 @@ URL = os.environ.get("OPENROUTER_BASE_URL", "https://openrouter.ai") + "/api/alp
 # Vendors' own System One endpoints: (url, model, env var holding the key, auth header, USD per 1M input tokens).
 # Same request body as above. The price fills in usage.cost when a vendor reports tokens but no cost; output is free.
 PROVIDERS = {
-    "fastino": ("https://api.fastino.ai/v1/systemone", "fastino/GLiDE", "FASTINO_API_KEY", "x-api-key", 0.15),
+    "fastino": ("https://api.fastino.ai/v1/systemone", "fastino/GLiDE", "FASTINO_API_KEY", "x-api-key", 0.04),
     "celeris": ("https://inference.celeris.ai/celeris-1-decision/v1/systemone", "celeris-1-decision", "CELERIS_API_KEY", "bearer", 0.04),
     "hanzo": ("https://api.hanzo.ai/v1/decisions", "kai", "HANZO_API_KEY", "bearer", 0.021),
     "meragpt": ("https://meragpt.com/v1/systemone", "decider-1", "MERAGPT_API_KEY", "bearer", 0.04),

@@ -434,6 +434,18 @@
       "latency": "API; not timed (round 9 ran from a machine whose round trips don't compare with the board's)",
       "short": "Joey 1",
       "note": "Built on Qwen3.5-2B by Base Labs, Baseten's research team. MIT weights (baselabs/joey-1). Text only."
+    },
+    "glide": {
+      "label": "GLiDE",
+      "maker": "Fastino",
+      "access": "Fastino API",
+      "slug": "fastino/GLiDE",
+      "run": "2026-11-02",
+      "series": 9,
+      "latency": "API; not timed (round 10 ran on Fastino's own API from a machine whose round trips don't compare with the board's)",
+      "short": "GLiDE",
+      "cost_basis": "At list price",
+      "note": "Ran on Fastino's own API, which reports the model as glide_v2. The open weights are V1.2 (fastino/GLiDE, 26B, Fastino's community licence). Cost is input tokens at the $0.04 per 1M list price, since the API reports no cost. Doesn't answer Box questions."
     }
   },
   "languages": [
@@ -527,11 +539,6 @@
     {
       "title": "Next: own API, same request shape",
       "items": [
-        {
-          "name": "Fastino GLiDE",
-          "access": "api.fastino.ai/v1/systemone",
-          "note": "Same request shape on Fastino's own API, so only the base URL and key change. $0.15 per 1M input tokens. Version 1.2's weights (fastino/GLiDE, 26B, Fastino's community licence) have been on Hugging Face since 19 October 2026, but are too big for the 24 GB Mac."
-        },
         {
           "name": "Celeris-1 Decision",
           "access": "inference.celeris.ai/celeris-1-decision/v1/systemone",

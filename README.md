@@ -70,6 +70,7 @@ Models covered so far:
 | Span-02 (`respan/span-02`) | Respan | OpenRouter Decisions API | 2026-10-25, text and vision |
 | Classify-1 (`scaledown/classify-1`) | ScaleDown | OpenRouter Decisions API; rejects most of our cases | 2026-10-25 |
 | Mammoth 1, Elephant 1 and Joey 1 (`baseten/mammoth-1`, `baseten/elephant-1`, `baseten/joey-1`) | Baseten | OpenRouter Decisions API | 2026-10-30 |
+| GLiDE (`fastino/GLiDE`) | Fastino | Fastino API | 2026-11-02, text and vision |
 | [Laya](https://huggingface.co/convaiinnovations/laya) and its Arabic fine-tunes | Convai Innovations, Wouze | open weights, locally on Apple MPS | 2026-09-23, 2026-09-25 |
 | d1-3B and d1-omni-600M (`LiquidAI/d1-3B`, `LiquidAI/d1-omni-600M`) | Liquid AI | open weights, llama.cpp on a 4-vCPU CPU | 2026-10-17, 2026-10-18 |
 | d3 edge, lite and nano (`vllm-sr/d3-{edge,lite,nano}`) | vLLM Semantic Router | open weights, llama.cpp on a 4-vCPU CPU | 2026-10-17, 2026-10-18 |
@@ -110,7 +111,8 @@ OPENROUTER_API_KEY=<your key> .venv/bin/python run_decisions.py --model typesafe
 - [Licence and citation](#licence-and-citation) · [Results site](#results-site) · [Roadmap](#roadmap) · [Live race](#live-race)
 - [Frozen data](#frozen-data) · [Full benchmark](#full-benchmark) · [Vision track](#vision-track) ·
   [Open-weight models, run locally](#open-weight-models-run-locally)
-- Rounds: [9, four more from OpenRouter](#round-9-four-more-models-from-openrouter-2026-10-30) ·
+- Rounds: [10, Fastino GLiDE on its own API](#round-10-fastino-glide-on-its-own-api-2026-11-02) ·
+  [9, four more from OpenRouter](#round-9-four-more-models-from-openrouter-2026-10-30) ·
   [8, seven more from OpenRouter](#round-8-seven-more-models-from-openrouter-2026-10-25) ·
   [7, open weights on a CPU](#round-7-eight-small-open-weight-models-on-a-cpu-2026-10-18) ·
   [6, vision](#round-6-the-vision-track-2026-10-15) · [5, Jev 1.14](#round-5-jev-114-2026-10-15) ·
@@ -180,8 +182,8 @@ mkdir -p _site && cp site/* results.json results_vision.json _site/ && python3 .
 ## Roadmap
 
 The roadmap lives in `site/meta.json` and is published at [systemonebench.dev/#roadmap](https://systemonebench.dev/#roadmap).
-As of 2026-10-30 it lists 4 hosted models on their own APIs with the same request shape (Fastino GLiDE, Celeris-1
-Decision, Hanzo Kai 1, meraGPT Decider 1), 7 open-weight entries (the rest of the Kev size sweep, the leading community
+As of 2026-11-02 it lists 3 hosted models on their own APIs with the same request shape (Celeris-1 Decision, Hanzo Kai
+1, meraGPT Decider 1), 7 open-weight entries (the rest of the Kev size sweep, the leading community
 models, GLiNER2.5-Decide, the larger d3 sizes, GLiClass, and THX-01 and vLLM's Decision-1.0 Eos 0.8B for the next CPU
 round), 3 entries that need a track of their own (Span-01's conversations, Cloudflare Clairic's extraction and plain
 chat-model baselines), and 4 on a watch list. [Round 9](#round-9-four-more-models-from-openrouter-2026-10-30) ran every
@@ -276,9 +278,10 @@ Latency on the site comes from a separate re-run of every API model from one mac
 .venv/bin/python set_latency.py lat/preds_*.jsonl   # re-runs written by run_decisions.py run inside lat/
 ```
 
-Round 9's models (d1.1, Mammoth 1, Elephant 1, Joey 1) have no latency on the board, since they ran from a machine whose
-round trips don't compare (see [round 9](#round-9-four-more-models-from-openrouter-2026-10-30)). After a full re-score,
-set their `latency_ms` back to `null`.
+Round 9's models (d1.1, Mammoth 1, Elephant 1, Joey 1) and GLiDE have no latency on the board, since they ran from a
+machine whose round trips don't compare (see [round 9](#round-9-four-more-models-from-openrouter-2026-10-30) and
+[round 10](#round-10-fastino-glide-on-its-own-api-2026-11-02)). After a full re-score, set their `latency_ms` back to
+`null`.
 
 Models on their vendor's own API take the same request body. `--provider fastino|celeris|hanzo|meragpt` sets the
 endpoint, model id and auth header, and reads the key from `FASTINO_API_KEY`, `CELERIS_API_KEY`, `HANZO_API_KEY` or
@@ -375,6 +378,44 @@ The other open models need their own runners:
 A 24 GB Mac fits everything up to 9B at Q8. The 27B models (Kev 27B, d3 27B, Open-Jev 27B) and Open-Jev 9B, whose base
 model alone is 19 GB, need a bigger machine. Laya Multilingual is already covered: Laya Router sends every non-English
 state, Arabic and French included, to those same weights.
+
+## Round 10: Fastino GLiDE on its own API (2026-11-02)
+
+GLiDE isn't on OpenRouter, so it ran on Fastino's own API (`run_decisions.py --provider fastino`) with the same request
+bodies as every other model, on the 3,250 text cases, 8 calls in flight. Every case got an answer. A second full run, not
+published, scored the same index (84.13): 3,110 cases came back identical and 7 answers changed.
+
+| Model | Maker | Index | English | Arabic | Calibration error | Cost per 1,000 calls |
+|---|---|---|---|---|---|---|
+| **GLiDE** | Fastino | **84.1** (2nd) | 83.0 (2nd) | 84.8 (2nd) | 3.6% | $0.017 |
+
+Ranks are out of the 35 models on the System One Index.
+
+- **GLiDE is 2nd**, 0.5 points behind Decider V1.2 (84.6) and 0.04 ahead of Drex Max, so both show as 84.1.
+- It's 2nd on XNLI English (94.7%, behind Drex Max's 95.3%), but it doesn't lead any dataset. Its weakest rank is 15th,
+  on Arabic MIRACL reranking (87.0%).
+- It's 14th on calibration (3.6%, against Decider V1.2's 0.7%).
+- Fastino's API reports tokens but no cost, so the cost is input tokens at the $0.04 per 1M list price
+  (`cost_from_list_price`).
+- The API reports the model as `glide_v2`. Fastino's open weights are V1.2, and we can't tell from the API which version
+  it serves, so the board calls it GLiDE.
+
+**Vision.** GLiDE reads images but rejects Box questions (422: only `noul`, `choice` and `score`), so it ran the 5 Vision
+Index datasets. Every case got an answer.
+
+| Model | Vision Index | SST-2 image | Arabic sentiment image | Pets (37) | VQAv2 yes/no | CountBench | Calibration error | Cost per 1,000 calls |
+|---|---|---|---|---|---|---|---|---|
+| GLiDE | 82.5 (7th) | 94.0 | 51.5 | 84.5 | 89.0 | 93.5 | 3.0% | $0.016 |
+
+- It's the third best calibrated on images (3.0%), and 3rd on VQAv2 yes/no.
+- It loses 22.0 points reading Arabic from a picture (51.5% on the images against 73.5% on the same tweets as text). Only
+  Decider Flash V1.2, Mercury and Clef have lost more.
+- Ranks are out of the 13 models on the Vision Index.
+
+**Latency isn't on the board for GLiDE.** This round ran from the same machine as round 9, and it doesn't go through
+OpenRouter like the board's timings. As a control, Jev 1.14 ran on 200 AG News cases through OpenRouter (not published):
+521 ms median with 8 calls in flight, against 136 ms on the board. `latency_ms` is `null`, and the model's `latency`
+field in `site/meta.json` says why.
 
 ## Round 9: four more models from OpenRouter (2026-10-30)
 
