@@ -530,7 +530,7 @@
         {
           "name": "Fastino GLiDE",
           "access": "api.fastino.ai/v1/systemone",
-          "note": "Same request shape on Fastino's own API, so only the base URL and key change. $0.15 per 1M input tokens. Version 1.2's weights (fastino/GLiDE, 26B, Fastino's community licence) have been on Hugging Face since 19 October 2026, but are too big for the 24 GB Mac."
+          "note": "Same request shape on Fastino's own API, so only the base URL and key change. $0.04 per 1M input tokens. Version 1.2's weights (fastino/GLiDE, 26B, Fastino's community licence) have been on Hugging Face since 19 October 2026, but are too big for the 24 GB Mac."
         },
         {
           "name": "Celeris-1 Decision",
