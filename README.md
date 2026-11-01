@@ -111,7 +111,8 @@ OPENROUTER_API_KEY=<your key> .venv/bin/python run_decisions.py --model typesafe
 - [Licence and citation](#licence-and-citation) · [Results site](#results-site) · [Roadmap](#roadmap) · [Live race](#live-race)
 - [Frozen data](#frozen-data) · [Full benchmark](#full-benchmark) · [Vision track](#vision-track) ·
   [Open-weight models, run locally](#open-weight-models-run-locally)
-- Rounds: [9, four more from OpenRouter](#round-9-four-more-models-from-openrouter-2026-10-30) ·
+- Rounds: [10, Fastino GLiDE on its own API](#round-10-fastino-glide-on-its-own-api-2026-11-02) ·
+  [9, four more from OpenRouter](#round-9-four-more-models-from-openrouter-2026-10-30) ·
   [8, seven more from OpenRouter](#round-8-seven-more-models-from-openrouter-2026-10-25) ·
   [7, open weights on a CPU](#round-7-eight-small-open-weight-models-on-a-cpu-2026-10-18) ·
   [6, vision](#round-6-the-vision-track-2026-10-15) · [5, Jev 1.14](#round-5-jev-114-2026-10-15) ·

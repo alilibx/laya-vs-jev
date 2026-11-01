@@ -444,6 +444,7 @@
       "series": 9,
       "latency": "API; not timed (round 10 ran on Fastino's own API from a machine whose round trips don't compare with the board's)",
       "short": "GLiDE",
+      "cost_basis": "At list price",
       "note": "Ran on Fastino's own API, which reports the model as glide_v2. The open weights are V1.2 (fastino/GLiDE, 26B, Fastino's community licence). Cost is input tokens at the $0.04 per 1M list price, since the API reports no cost. Doesn't answer Box questions."
     }
   },

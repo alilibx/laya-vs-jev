@@ -191,7 +191,7 @@ def model_page(k):
              rank_text(vr) if vr else ("No image input" if k in NO_IMAGE else "Not run on images")),
         tile("Calibration error", fpct(100 * r["all"]["ece"]), "Lower is better"),
         tile("Median latency", fms(lat["p50"]) if lat else "–", "Local, not comparable" if local(k) else f"95th percentile {fms(lat['p95'])}" if lat else ""),
-        tile("Cost per 1,000 calls", fusd(per1k(k)) if per1k(k) is not None else ("Local" if local(k) else "–"), "As billed"),
+        tile("Cost per 1,000 calls", fusd(per1k(k)) if per1k(k) is not None else ("Local" if local(k) else "–"), m.get("cost_basis", "As billed")),
     ]
     rows = []
     for s, sm in SUITES.items():
