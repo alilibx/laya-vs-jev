@@ -40,12 +40,19 @@ PROVIDERS = {
 }
 
 
+def usd(x):
+    """A cost as a number: meraGPT reports it as a string, such as "$0.000007"."""
+    return float(x.strip().lstrip("$")) if isinstance(x, str) else x
+
+
 def priced(usage, per_m):
     """usage with a USD cost: the reported one, meraGPT's cost_usd, or input tokens at the listed price."""
-    if not usage or usage.get("cost") is not None:
+    if not usage:
         return usage
+    if usage.get("cost") is not None:
+        return {**usage, "cost": usd(usage["cost"])}
     if usage.get("cost_usd") is not None:
-        return {**usage, "cost": usage["cost_usd"]}
+        return {**usage, "cost": usd(usage["cost_usd"])}
     if per_m and usage.get("input_tokens") is not None:
         return {**usage, "cost": usage["input_tokens"] * per_m / 1e6, "cost_from_list_price": True}
     return usage

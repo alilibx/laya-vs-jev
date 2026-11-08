@@ -30,7 +30,8 @@ pull request that shipped them.
 - [x] A badge model makers can put on their model card, linking to that model's results.
 - [ ] Run the open-weight roadmap locally (Liquid AI d1-3B and d1-omni-600M, the Kev sizes, the Naluri encoders,
   vLLM d3) and add a local-hardware latency chart.
-- [ ] The models on their own APIs (Celeris-1 Decision, Hanzo Kai 1, meraGPT Decider 1) once keys are in place.
+- [ ] The models on their own APIs: Hanzo Kai 1, once its quota allows a full run. (Celeris-1 Decision and meraGPT
+  Decider 1 ran in round 11.)
 
 ## 3. Something people use, not just read
 
