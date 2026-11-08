@@ -446,6 +446,29 @@
       "short": "GLiDE",
       "cost_basis": "At list price",
       "note": "Ran on Fastino's own API, which reports the model as glide_v2. The open weights are V1.2 (fastino/GLiDE, 26B, Fastino's community licence). Cost is input tokens at the $0.04 per 1M list price, since the API reports no cost. Doesn't answer Box questions."
+    },
+    "celeris1": {
+      "label": "Celeris-1 Decision",
+      "maker": "Celeris",
+      "access": "Celeris API",
+      "slug": "celeris-1-decision",
+      "run": "2026-11-08",
+      "series": 9,
+      "latency": "API; not timed (round 11 ran on Celeris's own API from a machine whose round trips don't compare with the board's)",
+      "short": "Celeris-1",
+      "cost_basis": "At list price",
+      "note": "Closed weights, on Celeris's own System One endpoint. Cost is input tokens at the $0.04 per 1M list price, since the API reports no cost. It accepts images but scored at chance on every image dataset (50.0% on SST-2 from an image, against 95.5% on the same reviews as text), so it has no vision score. Doesn't answer Box questions."
+    },
+    "meragpt_decider1": {
+      "label": "Decider 1",
+      "maker": "meraGPT",
+      "access": "meraGPT API",
+      "slug": "decider-1",
+      "run": "2026-11-08",
+      "series": 9,
+      "latency": "API; not timed (round 11 ran on meraGPT's own API from a machine whose round trips don't compare with the board's)",
+      "short": "meraGPT Decider 1",
+      "note": "Rejects any question with more than 10 options, so all 200 cases each of Banking77 (77 options), Arabic MASSIVE scenario (18) and Arabic MASSIVE intent (20) count as wrong; on the other 13 datasets it averages 75.5. Its 4,096-token cap rejects every image, so it has no vision score. The API takes state-decider-1 or decider-1 and reports decider-1. Cost is as billed, rounded to the millionth of a dollar per call. Its latency, not timed for the board, was about 10 seconds a call."
     }
   },
   "languages": [
@@ -540,19 +563,9 @@
       "title": "Next: own API, same request shape",
       "items": [
         {
-          "name": "Celeris-1 Decision",
-          "access": "inference.celeris.ai/celeris-1-decision/v1/systemone",
-          "note": "Released 8 October 2026. Implements the System One API, so only the base URL, key and model name change. Closed weights; $0.04 per 1M input tokens."
-        },
-        {
           "name": "Hanzo Kai 1",
           "access": "api.hanzo.ai/v1/decisions (model: kai)",
-          "note": "Uses the same request shape as OpenRouter's Decisions API, on Hanzo's own endpoint. Closed weights; $0.021 per 1M input tokens."
-        },
-        {
-          "name": "meraGPT Decider 1",
-          "access": "meragpt.com /v1/systemone (model: state-decider-1)",
-          "note": "Hosted since 22 September 2026. Requests are capped at 4,096 tokens and 10 options per question, so Banking77 and the long Arabic datasets would fail."
+          "note": "Uses the same request shape as OpenRouter's Decisions API, on Hanzo's own endpoint. Closed weights; $0.021 per 1M input tokens. Started in round 11, but our key allows 60,000 tokens per 8 hours and a full run needs about 765,000, so it waits for a higher quota. It doesn't read images."
         }
       ]
     },
@@ -691,7 +704,9 @@
       "classify1",
       "joey1",
       "mammoth1",
-      "elephant1"
+      "elephant1",
+      "celeris1",
+      "meragpt_decider1"
     ]
   }
 }

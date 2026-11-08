@@ -71,6 +71,8 @@ Models covered so far:
 | Classify-1 (`scaledown/classify-1`) | ScaleDown | OpenRouter Decisions API; rejects most of our cases | 2026-10-25 |
 | Mammoth 1, Elephant 1 and Joey 1 (`baseten/mammoth-1`, `baseten/elephant-1`, `baseten/joey-1`) | Baseten | OpenRouter Decisions API | 2026-10-30 |
 | GLiDE (`fastino/GLiDE`) | Fastino | Fastino API | 2026-11-02, text and vision |
+| Celeris-1 Decision (`celeris-1-decision`) | Celeris | Celeris API | 2026-11-08 |
+| Decider 1 (`decider-1`) | meraGPT | meraGPT API; rejects questions with more than 10 options | 2026-11-08 |
 | [Laya](https://huggingface.co/convaiinnovations/laya) and its Arabic fine-tunes | Convai Innovations, Wouze | open weights, locally on Apple MPS | 2026-09-23, 2026-09-25 |
 | d1-3B and d1-omni-600M (`LiquidAI/d1-3B`, `LiquidAI/d1-omni-600M`) | Liquid AI | open weights, llama.cpp on a 4-vCPU CPU | 2026-10-17, 2026-10-18 |
 | d3 edge, lite and nano (`vllm-sr/d3-{edge,lite,nano}`) | vLLM Semantic Router | open weights, llama.cpp on a 4-vCPU CPU | 2026-10-17, 2026-10-18 |
@@ -111,7 +113,8 @@ OPENROUTER_API_KEY=<your key> .venv/bin/python run_decisions.py --model typesafe
 - [Licence and citation](#licence-and-citation) · [Results site](#results-site) · [Roadmap](#roadmap) · [Live race](#live-race)
 - [Frozen data](#frozen-data) · [Full benchmark](#full-benchmark) · [Vision track](#vision-track) ·
   [Open-weight models, run locally](#open-weight-models-run-locally)
-- Rounds: [10, Fastino GLiDE on its own API](#round-10-fastino-glide-on-its-own-api-2026-11-02) ·
+- Rounds: [11, Celeris-1 and Decider 1 on their own APIs](#round-11-celeris-1-decision-and-meragpt-decider-1-on-their-own-apis-2026-11-08) ·
+  [10, Fastino GLiDE on its own API](#round-10-fastino-glide-on-its-own-api-2026-11-02) ·
   [9, four more from OpenRouter](#round-9-four-more-models-from-openrouter-2026-10-30) ·
   [8, seven more from OpenRouter](#round-8-seven-more-models-from-openrouter-2026-10-25) ·
   [7, open weights on a CPU](#round-7-eight-small-open-weight-models-on-a-cpu-2026-10-18) ·
@@ -182,8 +185,8 @@ mkdir -p _site && cp site/* results.json results_vision.json _site/ && python3 .
 ## Roadmap
 
 The roadmap lives in `site/meta.json` and is published at [systemonebench.dev/#roadmap](https://systemonebench.dev/#roadmap).
-As of 2026-11-02 it lists 3 hosted models on their own APIs with the same request shape (Celeris-1 Decision, Hanzo Kai
-1, meraGPT Decider 1), 7 open-weight entries (the rest of the Kev size sweep, the leading community
+As of 2026-11-08 it lists 1 hosted model on its own API with the same request shape (Hanzo Kai 1, waiting for a higher
+quota), 7 open-weight entries (the rest of the Kev size sweep, the leading community
 models, GLiNER2.5-Decide, the larger d3 sizes, GLiClass, and THX-01 and vLLM's Decision-1.0 Eos 0.8B for the next CPU
 round), 3 entries that need a track of their own (Span-01's conversations, Cloudflare Clairic's extraction and plain
 chat-model baselines), and 4 on a watch list. [Round 9](#round-9-four-more-models-from-openrouter-2026-10-30) ran every
@@ -278,9 +281,10 @@ Latency on the site comes from a separate re-run of every API model from one mac
 .venv/bin/python set_latency.py lat/preds_*.jsonl   # re-runs written by run_decisions.py run inside lat/
 ```
 
-Round 9's models (d1.1, Mammoth 1, Elephant 1, Joey 1) and GLiDE have no latency on the board, since they ran from a
-machine whose round trips don't compare (see [round 9](#round-9-four-more-models-from-openrouter-2026-10-30) and
-[round 10](#round-10-fastino-glide-on-its-own-api-2026-11-02)). After a full re-score, set their `latency_ms` back to
+Round 9's models (d1.1, Mammoth 1, Elephant 1, Joey 1), GLiDE, Celeris-1 Decision and Decider 1 have no latency on the
+board, since they ran from machines whose round trips don't compare (see
+[round 9](#round-9-four-more-models-from-openrouter-2026-10-30), [round 10](#round-10-fastino-glide-on-its-own-api-2026-11-02)
+and [round 11](#round-11-celeris-1-decision-and-meragpt-decider-1-on-their-own-apis-2026-11-08)). After a full re-score, set their `latency_ms` back to
 `null`.
 
 Models on their vendor's own API take the same request body. `--provider fastino|celeris|hanzo|meragpt` sets the
@@ -378,6 +382,46 @@ The other open models need their own runners:
 A 24 GB Mac fits everything up to 9B at Q8. The 27B models (Kev 27B, d3 27B, Open-Jev 27B) and Open-Jev 9B, whose base
 model alone is 19 GB, need a bigger machine. Laya Multilingual is already covered: Laya Router sends every non-English
 state, Arabic and French included, to those same weights.
+
+## Round 11: Celeris-1 Decision and meraGPT Decider 1 on their own APIs (2026-11-08)
+
+Neither model is on OpenRouter, so both ran on their vendor's own System One endpoint (`run_decisions.py --provider
+celeris` and `--provider meragpt`) with the same request bodies as every other model, on the 3,250 text cases, 8 calls in
+flight. Celeris-1 answered every case. Decider 1 rejected 600 (see below), which count as wrong.
+
+| Model | Maker | Index | English | Arabic | Calibration error | Failed | Cost per 1,000 calls |
+|---|---|---|---|---|---|---|---|
+| **Celeris-1 Decision** | Celeris | **83.6** (4th) | 83.2 (2nd) | 83.1 (9th) | 2.6% | 0 | $0.014 |
+| Decider 1 | meraGPT | 61.9 (33rd) | 67.4 (30th) | 54.7 (35th) | 7.9% | 600 | $0.012 |
+
+Ranks are out of the 37 models on the System One Index.
+
+- **Celeris-1 is 4th**, 1.0 point behind Decider V1.2 (84.6) and 0.5 behind GLiDE and Drex Max (84.1), and 2nd on the
+  English index. It's 2nd on typed decisions (76.4%) and XNLI French (90.0%); its weakest ranks are 17th, on BoolQ
+  (89.5%) and Arabic MIRACL reranking (86.5%).
+- It's 9th on calibration (2.6%). Celeris's API reports tokens but no cost, so the cost is input tokens at the $0.04 per
+  1M list price (`cost_from_list_price`).
+- **Decider 1 rejects any question with more than 10 options** (400: "a choice can offer at most 10 labels"), so all 200
+  cases each of Banking77 (77 options), Arabic MASSIVE scenario (18) and Arabic MASSIVE intent (20) count as wrong. On
+  the other 13 datasets it averages 75.5, which would rank 26th. Its 4,096-token cap didn't reject any text case.
+- meraGPT's API reports cost as a string (`"$0.000007"`), rounded to the millionth of a dollar per call;
+  `run_decisions.py` now reads it as a number. The API accepts both `state-decider-1` and `decider-1` and reports
+  `decider-1`.
+
+**Vision.** Neither model has a vision score. Celeris-1 accepts images but scored at chance on all 5 Vision Index
+datasets: 50.0% on SST-2 from an image (against 95.5% on the same reviews as text), 1.5% on the 37 pet breeds and 11.0%
+on CountBench. Its usage counted about 34,000 input tokens per image, the length of the base64 text, so it reads the
+image as text. Decider 1 rejects every image: one counts as about 10,000 tokens, over its 4,096-token cap. Both are listed
+under `vision.no_image` in `site/meta.json`, and neither answers Box questions.
+
+**Hanzo Kai 1 waits.** It started this round on Hanzo's own API, but our key allows 60,000 tokens per 8 hours
+(`x-ratelimit-limit: 60000`, then 429 "Usage limit reached for this 8h"), and a full run needs about 765,000, so after
+102 cases it stopped. It stays on the roadmap until the quota is raised; `run_decisions.py` resumes where it stopped. It
+also counts images as text (a 422 for "208,982 tokens" on one photo), so it would have no vision score either.
+
+**Latency isn't on the board for either model.** This round ran from a different machine from the board's timings, and
+not through OpenRouter. `latency_ms` is `null`, and each model's `latency` field in `site/meta.json` says why. Decider 1
+took about 10 seconds a call there, against about half a second for Celeris-1.
 
 ## Round 10: Fastino GLiDE on its own API (2026-11-02)
 
