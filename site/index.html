@@ -7,7 +7,7 @@
 <link rel="canonical" href="https://systemonebench.dev/">
 <meta name="description" content="Independent accuracy, calibration, latency and cost results for System One decision models on 16 labelled datasets in English, French and Arabic, plus a vision track on 6 image datasets.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<meta name="theme-color" content="#0c121d">
+<meta name="theme-color" content="#090c10">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="System One Bench">
 <meta property="og:title" content="System One Bench: every decision model, measured the same way">
@@ -25,7 +25,7 @@
 <script async src="https://us-assets.i.posthog.com/static/array.js" onload="posthog.init('phc_yCVgdaCDPPpPV77usF3Ar7FmwDY23xfCJaDN7hHSQprt', {api_host: 'https://us.i.posthog.com', cookieless_mode: 'always', person_profiles: 'identified_only', autocapture: false, disable_session_recording: true, capture_pageleave: true})"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script>
   // Apply a saved theme before the first paint, so the page never flashes the wrong one.
   try { const t = localStorage.getItem("theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}
@@ -33,206 +33,281 @@
 <style>
 :root {
   color-scheme: light;
-  --page: #f4f6f9; --surface: #ffffff; --ink: #121a2b; --ink-2: #4a5468; --muted: #6f7889;
-  --rule: #dfe3ea; --grid: #e9ecf1; --axis: #c3c9d3; --hover: #eef1f6; --good: rgba(27, 175, 122, 0.08);
+  --page: #f5f6f8; --surface: #ffffff; --side: #eceef2; --chrome: #e6e9ee; --ink: #161b24; --ink-2: #4b5462; --muted: #737d8c;
+  --rule: #dcdfe5; --grid: #e8ebef; --axis: #c2c8d1; --hover: #e9ecf1; --good: rgba(27, 175, 122, 0.08);
   --accent: #2a78d6; --accent-soft: rgba(42, 120, 214, 0.1); --mark: rgba(237, 161, 0, 0.28); --warn: #b45309;
+  --comment: #3f8f5e; --kw: #8a3fd1; --num: #b35c00; --status: #2a78d6; --status-ink: #ffffff;
   --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --s5: #e87ba4; --s6: #008300; --s7: #4a3aa7; --s8: #e34948; --s9: #8a93a3; --s10: #0b6e75;
-  --display: "Bricolage Grotesque", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --display: var(--mono);
   --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --side-w: 248px; --top-h: 48px; --status-h: 26px;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --page: #0c121d; --surface: #131b29; --ink: #eef2f8; --ink-2: #b6bfce; --muted: #8b95a7;
-    --rule: #263043; --grid: #1d2636; --axis: #3a465c; --hover: #1a2334; --good: rgba(25, 158, 112, 0.12);
-    --accent: #5b9ef0; --accent-soft: rgba(91, 158, 240, 0.14); --mark: rgba(201, 133, 0, 0.35); --warn: #fbbf24;
+    --page: #0b0e13; --surface: #10141b; --side: #0d1117; --chrome: #090c10; --ink: #e5eaf1; --ink-2: #a9b3c1; --muted: #6f7a89;
+    --rule: #1f2631; --grid: #19202a; --axis: #333d4c; --hover: #161c25; --good: rgba(25, 158, 112, 0.12);
+    --accent: #5ea6ff; --accent-soft: rgba(94, 166, 255, 0.13); --mark: rgba(201, 133, 0, 0.35); --warn: #fbbf24;
+    --comment: #6a9e7a; --kw: #c49bff; --num: #f0a35e; --status: #1b5fae; --status-ink: #eaf2ff;
     --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #008300; --s7: #9085e9; --s8: #e66767; --s9: #6f7889; --s10: #2fb3b5;
   }
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --page: #0c121d; --surface: #131b29; --ink: #eef2f8; --ink-2: #b6bfce; --muted: #8b95a7;
-  --rule: #263043; --grid: #1d2636; --axis: #3a465c; --hover: #1a2334; --good: rgba(25, 158, 112, 0.12);
-  --accent: #5b9ef0; --accent-soft: rgba(91, 158, 240, 0.14); --mark: rgba(201, 133, 0, 0.35); --warn: #fbbf24;
+  --page: #0b0e13; --surface: #10141b; --side: #0d1117; --chrome: #090c10; --ink: #e5eaf1; --ink-2: #a9b3c1; --muted: #6f7a89;
+  --rule: #1f2631; --grid: #19202a; --axis: #333d4c; --hover: #161c25; --good: rgba(25, 158, 112, 0.12);
+  --accent: #5ea6ff; --accent-soft: rgba(94, 166, 255, 0.13); --mark: rgba(201, 133, 0, 0.35); --warn: #fbbf24;
+  --comment: #6a9e7a; --kw: #c49bff; --num: #f0a35e; --status: #1b5fae; --status-ink: #eaf2ff;
   --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #008300; --s7: #9085e9; --s8: #e66767; --s9: #6f7889; --s10: #2fb3b5;
 }
 * { box-sizing: border-box; }
-html { scroll-padding-top: 76px; }
-body { margin: 0; background: var(--page); color: var(--ink); font: 16px/1.55 var(--body); -webkit-font-smoothing: antialiased; }
+html { scroll-padding-top: calc(var(--top-h) + 16px); }
+body { margin: 0; background: var(--page); color: var(--ink); font: 15.5px/1.6 var(--body); -webkit-font-smoothing: antialiased; padding-bottom: var(--status-h); }
 a { color: inherit; text-underline-offset: 3px; text-decoration-thickness: 1px; }
 a:hover { text-decoration-thickness: 2px; }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
-code { font: 0.9em ui-monospace, "SF Mono", Menlo, monospace; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+code { font: 0.88em var(--mono); }
 button { font: inherit; color: inherit; }
-.wrap { max-width: 1180px; margin: 0 auto; padding: 0 16px; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 16px; }
 
-/* Masthead: stays on screen, with the search that filters every chart and table. */
-.top { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--page) 86%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--rule); }
-.top .wrap { display: flex; align-items: center; gap: 20px; height: 60px; }
-.mark { display: flex; align-items: center; gap: 10px; font: 800 19px/1 var(--display); letter-spacing: -0.01em; text-decoration: none; white-space: nowrap; }
-.top nav { display: flex; gap: 2px; font-size: 14.5px; color: var(--ink-2); margin-right: auto; }
-.top nav a { text-decoration: none; padding: 6px 10px; border-radius: 6px; }
-.top nav a:hover { background: var(--hover); }
-.top nav a[aria-current="true"] { color: var(--ink); background: var(--hover); }
-.search { position: relative; display: flex; align-items: center; }
+/* ---------- IDE shell: title bar, explorer, editor, status bar ---------- */
+.top { position: sticky; top: 0; z-index: 20; background: var(--chrome); border-bottom: 1px solid var(--rule); }
+.top .bar { display: flex; align-items: center; gap: 14px; height: var(--top-h); padding: 0 14px; }
+.lights { display: flex; gap: 7px; flex: none; }
+.lights i { width: 11px; height: 11px; border-radius: 50%; background: var(--axis); }
+.lights i:nth-child(1) { background: #ff5f57; } .lights i:nth-child(2) { background: #febc2e; } .lights i:nth-child(3) { background: #28c840; }
+.mark { display: flex; align-items: center; gap: 9px; font: 600 14px/1 var(--mono); text-decoration: none; white-space: nowrap; }
+.mark .crumb { color: var(--muted); font-weight: 400; }
+.search { position: relative; display: flex; align-items: center; margin: 0 auto; }
 .search svg { position: absolute; left: 10px; color: var(--muted); pointer-events: none; }
-.search input { width: 240px; font: 14.5px var(--body); color: var(--ink); background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 7px 34px 7px 32px; }
+.search input { width: min(440px, 42vw); font: 13px var(--mono); color: var(--ink); background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 6px 34px 6px 32px; }
 .search input::placeholder { color: var(--muted); }
-.search input:focus { outline: 2px solid var(--accent); outline-offset: 0; border-color: transparent; }
-.search kbd { position: absolute; right: 8px; font: 12px ui-monospace, monospace; color: var(--muted); border: 1px solid var(--rule); border-radius: 4px; padding: 0 5px; pointer-events: none; }
+.search input:focus { outline: 1px solid var(--accent); outline-offset: 0; border-color: var(--accent); }
+.search kbd { position: absolute; right: 8px; font: 11px var(--mono); color: var(--muted); border: 1px solid var(--rule); border-radius: 4px; padding: 0 5px; pointer-events: none; }
 .search input:focus + kbd, .search input:not(:placeholder-shown) + kbd { display: none; }
-.icon-btn { display: inline-grid; place-items: center; width: 36px; height: 36px; border: 1px solid var(--rule); border-radius: 8px; background: var(--surface); cursor: pointer; color: var(--ink-2); flex: none; }
-.icon-btn:hover { color: var(--ink); background: var(--hover); }
-.filter-pill { position: fixed; z-index: 19; left: 50%; transform: translateX(-50%); top: 68px; display: flex; align-items: center; gap: 10px; background: var(--ink); color: var(--page); border-radius: 999px; padding: 6px 8px 6px 14px; font-size: 13.5px; box-shadow: 0 6px 24px rgba(10, 16, 30, 0.2); }
-.filter-pill[hidden] { display: none; }
-.filter-pill button { background: color-mix(in srgb, var(--page) 18%, transparent); border: 0; color: inherit; border-radius: 999px; padding: 3px 10px; cursor: pointer; font-size: 13px; }
+.icon-btn { display: inline-grid; place-items: center; width: 32px; height: 32px; border: 1px solid transparent; border-radius: 6px; background: none; cursor: pointer; color: var(--ink-2); flex: none; text-decoration: none; }
+.icon-btn:hover { color: var(--ink); background: var(--hover); border-color: var(--rule); }
 
-.hero { padding: 44px 0 4px; }
-.eyebrow { font: 600 12.5px var(--body); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin: 0 0 8px; }
-.hero h1 { font: 700 clamp(30px, 4.4vw, 48px)/1.06 var(--display); letter-spacing: -0.025em; margin: 0 0 14px; max-width: 26ch; text-wrap: balance; }
-.lede { max-width: 70ch; color: var(--ink-2); margin: 0 0 6px; font-size: 17px; }
-.stamp { color: var(--muted); font-size: 14px; margin: 0 0 22px; }
+/* Open-editor tabs: one per section, shown when the explorer is hidden. */
+.top nav { display: none; overflow-x: auto; scrollbar-width: none; border-top: 1px solid var(--rule); background: var(--side); }
+.top nav::-webkit-scrollbar { display: none; }
+.top nav a { flex: none; display: inline-flex; align-items: center; gap: 7px; font: 12.5px var(--mono); color: var(--muted); text-decoration: none; padding: 8px 14px; border-right: 1px solid var(--rule); border-top: 2px solid transparent; }
+.top nav a:hover { color: var(--ink); background: var(--hover); }
+.top nav a[aria-current="true"] { color: var(--ink); background: var(--page); border-top-color: var(--accent); }
+
+.side { position: fixed; z-index: 15; top: var(--top-h); bottom: var(--status-h); left: 0; width: var(--side-w); background: var(--side); border-right: 1px solid var(--rule); overflow-y: auto; padding: 10px 0 18px; font: 13px/1.5 var(--mono); }
+.side-h { font: 600 11px var(--mono); letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); margin: 6px 0 4px; padding: 0 16px; display: flex; justify-content: space-between; }
+.tree { list-style: none; margin: 0 0 14px; padding: 0; }
+.tree li { padding: 0; }
+.tree .dir { display: flex; align-items: center; gap: 6px; padding: 3px 16px; color: var(--ink-2); }
+.tree .dir::before { content: "▾"; color: var(--muted); font-size: 10px; width: 10px; }
+.tree a { display: flex; align-items: center; gap: 8px; padding: 3px 16px 3px 32px; color: var(--ink-2); text-decoration: none; border-left: 2px solid transparent; }
+.tree a.lvl0 { padding-left: 16px; }
+.tree a:hover { background: var(--hover); color: var(--ink); }
+.tree a[aria-current="true"] { background: var(--accent-soft); color: var(--ink); border-left-color: var(--accent); }
+.tree a .ft { font: 600 9.5px/1 var(--mono); width: 18px; text-align: center; flex: none; }
+.ft.tsv { color: var(--s3); } .ft.chart { color: var(--s4); } .ft.md { color: var(--accent); } .ft.json { color: var(--num); } .ft.folder { color: var(--muted); } .ft.web { color: var(--kw); }
+.side-makers { list-style: none; margin: 0; padding: 0; }
+.side-makers button { display: flex; align-items: center; gap: 9px; width: 100%; background: none; border: 0; border-left: 2px solid transparent; padding: 3px 16px; cursor: pointer; text-align: left; color: var(--ink-2); font: 12.5px var(--mono); }
+.side-makers button:hover { background: var(--hover); color: var(--ink); }
+.side-makers button[aria-pressed="true"] { background: var(--accent-soft); color: var(--ink); border-left-color: var(--accent); }
+.side-makers button > span:not(.logo) { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.side-makers button em { font-style: normal; color: var(--muted); font-size: 11.5px; }
+
+.status { position: fixed; z-index: 21; left: 0; right: 0; bottom: 0; height: var(--status-h); display: flex; align-items: center; gap: 2px; background: var(--status); color: var(--status-ink); font: 11.5px/1 var(--mono); padding: 0 6px; overflow: hidden; white-space: nowrap; }
+.status > * { padding: 0 9px; display: inline-flex; align-items: center; gap: 6px; height: 100%; }
+.status a { text-decoration: none; } .status a:hover { background: rgba(255, 255, 255, 0.12); }
+.status .live::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #3ee08f; box-shadow: 0 0 0 3px rgba(62, 224, 143, 0.25); }
+.status .right { margin-left: auto; }
+
+main.wrap { padding-bottom: 8px; }
+@media (min-width: 1100px) {
+  main.wrap, .filter-pill-host { margin-left: calc(var(--side-w) + max(0px, (100vw - var(--side-w) - 1240px) / 2)); margin-right: auto; padding: 0 32px; }
+}
+
+.filter-pill { position: fixed; z-index: 19; left: 50%; transform: translateX(-50%); bottom: calc(var(--status-h) + 14px); display: flex; align-items: center; gap: 10px; background: var(--ink); color: var(--page); border-radius: 6px; padding: 6px 8px 6px 14px; font: 12.5px var(--mono); box-shadow: 0 6px 24px rgba(10, 16, 30, 0.25); }
+.filter-pill[hidden] { display: none; }
+.filter-pill button { background: color-mix(in srgb, var(--page) 18%, transparent); border: 0; color: inherit; border-radius: 4px; padding: 3px 10px; cursor: pointer; font: inherit; }
+
+/* ---------- Hero: a terminal prompt and its answer ---------- */
+.hero { padding: 34px 0 4px; }
+.prompt { font: 13px var(--mono); color: var(--muted); margin: 0 0 12px; }
+.prompt b { color: var(--s3); font-weight: 500; } .prompt span { color: var(--ink-2); }
+.eyebrow { font: 500 12.5px var(--mono); color: var(--comment); margin: 0 0 8px; }
+.eyebrow::before { content: "// "; }
+.hero h1 { font: 600 clamp(22px, 2.5vw, 31px)/1.3 var(--mono); letter-spacing: -0.03em; margin: 0 0 14px; max-width: 44ch; text-wrap: balance; }
+.hero h1::after { content: ""; display: inline-block; width: 0.5em; height: 0.95em; margin-left: 0.18em; vertical-align: -0.12em; background: var(--accent); animation: blink 1.1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .hero h1::after { animation: none; } }
+.lede { max-width: 72ch; color: var(--ink-2); margin: 0 0 6px; font-size: 16px; }
+.stamp { color: var(--muted); font: 12.5px var(--mono); margin: 0 0 22px; }
 
 /* Leader tiles: one claim each, with the margin and the context that keeps it honest. */
 .tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 18px; }
-.tile { display: block; text-decoration: none; background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; padding: 14px 16px 15px; min-width: 0; transition: border-color 0.15s; }
+.tile { display: block; text-decoration: none; background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 13px 15px 14px; min-width: 0; transition: border-color 0.15s, transform 0.15s; position: relative; overflow: hidden; }
+.tile::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 2px; background: var(--accent); opacity: 0.8; }
 .tile:hover { border-color: var(--axis); }
-.tile .k { font-size: 12.5px; color: var(--muted); font-weight: 500; letter-spacing: 0.02em; }
-.tile .who { display: flex; align-items: center; gap: 7px; font-weight: 600; margin: 8px 0 2px; min-width: 0; }
-.tile .who i { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+.tile .k { font: 500 11.5px var(--mono); color: var(--muted); letter-spacing: 0.02em; text-transform: uppercase; }
+.tile .who { display: flex; align-items: center; gap: 9px; font-weight: 600; margin: 10px 0 4px; min-width: 0; }
 .tile .who span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.tile .v { font: 700 30px/1.1 var(--display); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
-.tile .v small { font: 500 14px var(--body); color: var(--muted); letter-spacing: 0; margin-left: 4px; }
+.tile .v { font: 600 30px/1.1 var(--mono); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; color: var(--ink); }
+.tile .v small { font: 500 12px var(--mono); color: var(--muted); letter-spacing: 0; margin-left: 6px; }
 .tile .ctx { color: var(--ink-2); font-size: 13px; margin-top: 6px; line-height: 1.45; }
-.living { max-width: 70ch; margin: 0 0 28px; padding: 10px 14px; border-left: 3px solid var(--accent); background: var(--surface); border-radius: 0 8px 8px 0; color: var(--ink-2); font-size: 14.5px; }
+.living { max-width: 76ch; margin: 0 0 28px; padding: 10px 14px; border: 1px solid var(--rule); border-left: 3px solid var(--comment); background: var(--surface); border-radius: 0 6px 6px 0; color: var(--ink-2); font-size: 14px; }
 
-/* Cards hold one chart each: a title, what is measured and which way is better, then the chart. */
-.card { background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; padding: 20px 20px 16px; min-width: 0; }
-.card h3 { font: 700 20px/1.2 var(--display); letter-spacing: -0.01em; margin: 0; }
-.card .sub { color: var(--muted); font-size: 13.5px; margin: 4px 0 12px; }
+/* Maker logos: a white tile so dark marks stay visible in both themes, with the chart color as a corner dot. */
+.logo { position: relative; flex: none; display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 5px; background: #fff; box-shadow: 0 0 0 1px var(--rule); }
+.logo img { width: 16px; height: 16px; object-fit: contain; display: block; }
+.logo.mono { background: var(--c, var(--muted)); color: #fff; font: 700 9.5px/1 var(--mono); letter-spacing: -0.02em; box-shadow: none; }
+.logo::after { content: ""; position: absolute; right: -3px; bottom: -3px; width: 8px; height: 8px; border-radius: 50%; background: var(--c, var(--muted)); box-shadow: 0 0 0 2px var(--surface); }
+.logo.mono::after { display: none; }
+.logo.lg { width: 30px; height: 30px; border-radius: 7px; } .logo.lg img { width: 22px; height: 22px; } .logo.lg.mono { font-size: 12px; }
+.logo.sm { width: 18px; height: 18px; border-radius: 4px; } .logo.sm img { width: 13px; height: 13px; } .logo.sm::after { width: 6px; height: 6px; right: -2px; bottom: -2px; } .logo.sm.mono { font-size: 8px; }
+
+/* Cards are editor panes: a mono title, what is measured and which way is better, then the chart. */
+.card { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 16px 18px 14px; min-width: 0; }
+.card h3 { font: 600 14.5px/1.3 var(--mono); letter-spacing: -0.01em; margin: 0; display: flex; align-items: center; gap: 8px; }
+.card h3::before { content: ""; width: 8px; height: 8px; border-radius: 2px; background: var(--accent); flex: none; opacity: 0.85; }
+.card .sub { color: var(--muted); font-size: 13px; margin: 5px 0 12px; }
 .card.stack { margin-top: 16px; }
-.latency-note { color: var(--muted); font-size: 12.5px; margin: 12px 0 0; padding-left: 10px; border-left: 2px solid var(--rule); }
-.trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-.trio .card h3 { font-size: 18px; }
+.latency-note { color: var(--muted); font-size: 12px; margin: 12px 0 0; padding-left: 10px; border-left: 2px solid var(--rule); }
+.trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
 
-.section { padding: 56px 0 0; }
-.section > h2 { font: 700 30px/1.1 var(--display); letter-spacing: -0.015em; margin: 0 0 6px; }
-.section > p.note { color: var(--ink-2); margin: 0 0 18px; max-width: 74ch; }
-.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.section { padding: 52px 0 0; }
+.section > h2 { font: 600 24px/1.2 var(--mono); letter-spacing: -0.02em; margin: 0 0 8px; display: flex; align-items: baseline; gap: 10px; }
+.section > h2::before { content: "#"; color: var(--accent); font-weight: 500; }
+.section > p.note { color: var(--ink-2); margin: 0 0 18px; max-width: 78ch; font-size: 15px; }
+.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 
 .card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
-.tabs { display: inline-flex; border: 1px solid var(--rule); border-radius: 8px; padding: 3px; background: var(--page); flex-wrap: wrap; }
-.tabs button { font: 500 13.5px var(--body); color: var(--ink-2); background: none; border: 0; border-radius: 5px; padding: 5px 11px; cursor: pointer; }
-.tabs button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 0 0 1px var(--rule); }
+.tabs { display: inline-flex; border: 1px solid var(--rule); border-radius: 6px; padding: 2px; background: var(--page); flex-wrap: wrap; }
+.tabs button { font: 500 12.5px var(--mono); color: var(--muted); background: none; border: 0; border-radius: 4px; padding: 4px 11px; cursor: pointer; }
+.tabs button:hover { color: var(--ink); }
+.tabs button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 0 0 1px var(--rule), inset 0 -2px 0 var(--accent); }
 
-.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13.5px; color: var(--ink-2); list-style: none; margin: 0; padding: 0; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font: 12.5px var(--mono); color: var(--ink-2); list-style: none; margin: 0; padding: 0; }
 .legend li { display: inline-flex; align-items: center; gap: 7px; }
-.legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.legend i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
 
 svg.chart { display: block; width: 100%; overflow: visible; font-family: var(--body); }
 svg.chart text { font-variant-numeric: tabular-nums; }
 svg.chart .bar:hover path, svg.chart .pt:hover circle { opacity: 0.85; }
 
-.multiples { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
-.multiples .card { padding: 16px 16px 12px; }
-.multiples .card h3 { font-size: 16px; }
+.multiples { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.multiples .card { padding: 14px 14px 10px; }
+.multiples .card h3 { font-size: 13px; }
 .card h3 a { color: inherit; text-decoration: none; }
-.card h3 a:hover { text-decoration: underline; text-underline-offset: 3px; }
-.multiples .card .sub { font-size: 12.5px; margin-bottom: 6px; }
-.group-title { font: 600 15px var(--body); color: var(--ink-2); margin: 26px 0 10px; }
+.card h3 a:hover { text-decoration: underline; text-underline-offset: 3px; color: var(--accent); }
+.multiples .card .sub { font-size: 12px; margin-bottom: 6px; }
+.group-title { font: 500 12.5px var(--mono); color: var(--comment); margin: 26px 0 10px; }
+.group-title::before { content: "// "; }
 
-.tip { position: absolute; z-index: 30; pointer-events: none; background: var(--surface); color: var(--ink); border: 1px solid var(--rule);
-  border-radius: 8px; padding: 9px 12px; font-size: 13px; box-shadow: 0 6px 24px rgba(10, 16, 30, 0.14); max-width: 280px; font-variant-numeric: tabular-nums; }
+.tip { position: absolute; z-index: 30; pointer-events: none; background: var(--surface); color: var(--ink); border: 1px solid var(--axis);
+  border-radius: 6px; padding: 8px 11px; font-size: 12.5px; box-shadow: 0 8px 28px rgba(5, 8, 14, 0.28); max-width: 280px; font-variant-numeric: tabular-nums; }
 .tip[hidden] { display: none; }
-.tip b { display: block; font-size: 14px; }
+.tip b { display: block; font: 600 12.5px var(--mono); }
 .tip span { color: var(--ink-2); display: block; }
 
 /* Filters above the leaderboard: maker chips, and how many models the search leaves. */
-.filters { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; margin: 0 0 14px; }
+.filters { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; margin: 0 0 12px; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.chips button { display: inline-flex; align-items: center; gap: 7px; font-size: 13.5px; background: var(--surface); border: 1px solid var(--rule); border-radius: 999px; padding: 4px 12px 4px 10px; cursor: pointer; color: var(--ink-2); }
-.chips button i { width: 9px; height: 9px; border-radius: 3px; }
+.chips button { display: inline-flex; align-items: center; gap: 7px; font: 12.5px var(--mono); background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 3px 10px 3px 4px; cursor: pointer; color: var(--ink-2); }
 .chips button:hover { border-color: var(--axis); color: var(--ink); }
 .chips button[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--ink); }
-.filter-status { color: var(--muted); font-size: 13.5px; margin: 0; }
+.filter-status { color: var(--muted); font: 12.5px var(--mono); margin: 0; }
 .filter-status button { background: none; border: 0; padding: 0; color: var(--accent); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; font-size: inherit; }
 
-/* Leaderboard */
-.board-card { padding: 6px 20px 4px; }
+/* Leaderboard: a data grid. */
+.board-card { padding: 0; overflow: hidden; }
+.board-card .table-wrap { padding: 0 16px 4px; }
+.pane-tabs { display: flex; align-items: stretch; background: var(--side); border-bottom: 1px solid var(--rule); font: 12.5px var(--mono); }
+.pane-tabs > span { display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; border-right: 1px solid var(--rule); color: var(--muted); }
+.pane-tabs > span.on { background: var(--surface); color: var(--ink); box-shadow: inset 0 2px 0 var(--accent); margin-bottom: -1px; }
+.pane-tabs .meta { margin-left: auto; border: 0; border-left: 1px solid var(--rule); }
 .table-wrap { overflow-x: auto; }
 table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
-th { font: 500 13px var(--body); color: var(--muted); text-align: right; padding: 0 12px 10px; white-space: nowrap; vertical-align: bottom; }
+th { font: 500 11.5px var(--mono); color: var(--muted); text-align: right; padding: 0 12px 9px; white-space: nowrap; vertical-align: bottom; text-transform: uppercase; letter-spacing: 0.03em; }
 th:first-child, td:first-child { text-align: left; padding-left: 0; }
-td { padding: 13px 12px; border-top: 1px solid var(--rule); text-align: right; white-space: nowrap; vertical-align: middle; }
+td { padding: 11px 12px; border-top: 1px solid var(--rule); text-align: right; white-space: nowrap; vertical-align: middle; font-size: 14px; }
 td:last-child, th:last-child { padding-right: 0; }
+#board td:not(:nth-child(2)) { font-family: var(--mono); font-size: 13px; }
 #board th { padding-top: 14px; }
-#board th button { font: inherit; color: inherit; background: none; border: 0; padding: 2px 0; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+#board th button { font: inherit; color: inherit; background: none; border: 0; padding: 2px 0; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; text-transform: inherit; letter-spacing: inherit; }
 #board th button:hover { color: var(--ink); }
 #board th[aria-sort] button { color: var(--ink); }
 #board th button::after { content: "↕"; opacity: 0.35; font-size: 11px; }
-#board th[aria-sort="descending"] button::after { content: "↓"; opacity: 1; }
-#board th[aria-sort="ascending"] button::after { content: "↑"; opacity: 1; }
-#board th small { display: block; font-size: 11.5px; color: var(--muted); font-weight: 400; }
-#board .rank { width: 34px; color: var(--muted); font-size: 13.5px; padding-right: 0; }
+#board th[aria-sort="descending"] button::after { content: "↓"; opacity: 1; color: var(--accent); }
+#board th[aria-sort="ascending"] button::after { content: "↑"; opacity: 1; color: var(--accent); }
+#board th small { display: block; font-size: 10.5px; color: var(--muted); font-weight: 400; text-transform: none; letter-spacing: 0; }
+#board .rank { width: 34px; color: var(--muted); font-size: 12px; padding-right: 0; }
 #board tbody tr.row { cursor: pointer; }
 #board tbody tr.row:hover td { background: var(--hover); }
-#board tbody tr.row td:first-child { border-radius: 8px 0 0 8px; }
-.model { display: flex; align-items: center; gap: 10px; }
-.model i { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+#board tbody tr.row:nth-child(-n+4 of .row) .rank { color: var(--num); font-weight: 600; }
+.model { display: flex; align-items: center; gap: 11px; }
 .model b { font-weight: 600; display: block; }
-.model small { color: var(--muted); font-size: 13px; display: block; }
-.model small .fail { display: block; color: var(--s8); }
+.model small { color: var(--muted); font-size: 12.5px; display: block; }
+.model small .fail { display: block; color: var(--s8); font-family: var(--mono); font-size: 11.5px; }
 #board th:nth-child(2), #board td:nth-child(2) { text-align: left; }
-.model .more { background: none; border: 0; padding: 0; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 10px; }
+.model .more { background: none; border: 0; padding: 0; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 11px; }
 .model .more::after { content: "›"; color: var(--muted); font-size: 18px; line-height: 1; transition: transform 0.15s; margin-left: 2px; }
 .model .more[aria-expanded="true"]::after { transform: rotate(90deg); }
 .idx { display: inline-flex; align-items: center; gap: 8px; justify-content: flex-end; }
-.idx span { display: inline-block; width: 56px; height: 6px; border-radius: 3px; background: var(--grid); position: relative; overflow: hidden; }
-.idx span::before { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--w); background: var(--c, var(--accent)); border-radius: 3px; }
-.top1 { font-weight: 700; }
+.idx span { display: inline-block; width: 56px; height: 5px; border-radius: 1px; background: var(--grid); position: relative; overflow: hidden; }
+.idx span::before { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--w); background: var(--c, var(--accent)); border-radius: 1px; }
+.top1 { font-weight: 700; color: var(--num); }
 .tag.flag { color: var(--warn); border-color: currentColor; }
-.tag { display: inline-block; font-size: 11.5px; font-weight: 500; color: var(--muted); border: 1px solid var(--rule); border-radius: 4px; padding: 0 5px; margin-left: 6px; vertical-align: 1px; }
+.tag { display: inline-block; font: 500 10.5px var(--mono); color: var(--muted); border: 1px solid var(--rule); border-radius: 3px; padding: 0 5px; margin-left: 6px; vertical-align: 1px; }
 mark { background: var(--mark); color: inherit; border-radius: 2px; }
 .dim td { color: var(--muted); }
-tr.group td { border-top: 0; padding: 22px 0 6px; font: 600 14px var(--body); color: var(--ink-2); text-align: left; white-space: normal; }
+tr.group td { border-top: 0; padding: 22px 0 6px; font: 500 12.5px var(--mono); color: var(--comment); text-align: left; white-space: normal; }
+tr.group td::before { content: "// "; }
 tr.empty td { text-align: left; color: var(--muted); white-space: normal; }
 tr.detail td { padding: 4px 0 20px; text-align: left; white-space: normal; border-top: 0; }
-.detail-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.6fr) minmax(0, 1fr); gap: 20px 28px; background: var(--page); border: 1px solid var(--rule); border-radius: 10px; padding: 16px 18px; }
-.detail-grid h4 { font: 600 13px var(--body); color: var(--muted); margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.06em; }
-.detail-grid dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 13.5px; }
+.detail-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.6fr) minmax(0, 1fr); gap: 20px 28px; background: var(--page); border: 1px solid var(--rule); border-radius: 6px; padding: 16px 18px; font-family: var(--body); }
+.detail-grid h4 { font: 600 11px var(--mono); color: var(--muted); margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.08em; }
+.detail-grid dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 13px; }
 .detail-grid dt { color: var(--muted); }
 .detail-grid dd { margin: 0; overflow-wrap: anywhere; }
-.detail-grid ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3px 18px; font-size: 13.5px; }
+.detail-grid ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3px 18px; font-size: 13px; }
 .detail-grid li { display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px dashed var(--rule); padding: 2px 0; }
-.detail-grid li em { font-style: normal; color: var(--muted); font-size: 12px; margin-left: 6px; }
+.detail-grid li b { font-family: var(--mono); font-weight: 500; }
+.detail-grid li em { font-style: normal; color: var(--muted); font-size: 11.5px; margin-left: 6px; font-family: var(--mono); }
 .detail-grid li.best b { color: var(--s3); }
-.detail-grid p { font-size: 13.5px; color: var(--ink-2); margin: 10px 0 0; }
+.detail-grid p { font-size: 13px; color: var(--ink-2); margin: 10px 0 0; }
 .vision-only ul { grid-template-columns: 1fr; }
 .na { color: var(--muted); }
 details { margin: 16px 0 0; }
-summary { cursor: pointer; color: var(--ink-2); font-size: 15px; }
-details table { margin-top: 12px; font-size: 14px; }
+summary { cursor: pointer; color: var(--ink-2); font: 13px var(--mono); }
+details table { margin-top: 12px; font-size: 13.5px; }
 details td, details th { padding: 7px 10px; }
-details td.win { font-weight: 600; }
+details td { font-family: var(--mono); font-size: 12.5px; }
+details td.win { font-weight: 600; color: var(--num); }
 
-.road { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; align-items: start; }
+.road { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; align-items: start; }
 .road ul { list-style: none; margin: 0; padding: 0; }
 .road li { padding: 12px 0; border-top: 1px solid var(--rule); }
 .road li:first-child { border-top: 0; padding-top: 4px; }
 .road li b { display: block; font-weight: 600; }
-.road li code { display: block; color: var(--ink-2); font-size: 12.5px; margin: 2px 0 4px; overflow-wrap: anywhere; }
-.road li span { color: var(--ink-2); font-size: 14px; }
-.road .count { color: var(--muted); font-size: 13.5px; margin: 4px 0 10px; }
+.road li code { display: block; color: var(--kw); font-size: 12px; margin: 2px 0 4px; overflow-wrap: anywhere; }
+.road li span { color: var(--ink-2); font-size: 13.5px; }
+.road .count { color: var(--muted); font: 12px var(--mono); margin: 4px 0 10px; }
 .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
 .cols > *, .road > * { min-width: 0; }  /* let long code lines scroll instead of widening the page */
-.cols h3 { font: 700 18px var(--display); margin: 0 0 8px; }
-.cols p, .cols li { color: var(--ink-2); }
+.cols h3 { font: 600 15px var(--mono); margin: 0 0 8px; }
+.cols p, .cols li { color: var(--ink-2); font-size: 14.5px; }
 .cols ul { padding-left: 18px; margin: 0; }
-pre { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 14px 16px; overflow-x: auto; font: 13px/1.6 ui-monospace, "SF Mono", Menlo, monospace; }
-footer { border-top: 1px solid var(--rule); margin-top: 56px; padding: 22px 0 40px; color: var(--muted); font-size: 14px; display: flex; flex-wrap: wrap; gap: 8px 24px; }
-.error { border: 1px solid var(--rule); border-radius: 8px; padding: 16px; background: var(--surface); }
+.cols li { margin-bottom: 6px; }
+pre { position: relative; background: var(--chrome); color: var(--ink); border: 1px solid var(--rule); border-radius: 8px; padding: 34px 16px 14px; overflow-x: auto; font: 12.5px/1.7 var(--mono); }
+pre::before { content: "bash"; position: absolute; top: 0; left: 0; right: 0; padding: 5px 14px; font: 11px var(--mono); color: var(--muted); border-bottom: 1px solid var(--rule); background: var(--side); }
+footer { border-top: 1px solid var(--rule); margin-top: 56px; padding: 20px 0 28px; color: var(--muted); font: 12.5px var(--mono); display: flex; flex-wrap: wrap; gap: 8px 22px; }
+.error { border: 1px solid var(--rule); border-radius: 6px; padding: 16px; background: var(--surface); }
 
-@media (max-width: 1100px) { .top nav a.opt { display: none; } }
+@media (max-width: 1099px) {
+  .side { display: none; }
+  .top nav { display: flex; }
+  html { scroll-padding-top: calc(var(--top-h) + 52px); }
+}
 @media (max-width: 1000px) {
   .multiples { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -240,59 +315,82 @@ footer { border-top: 1px solid var(--rule); margin-top: 56px; padding: 22px 0 40
   .detail-grid > :first-child { grid-column: 1 / -1; }
 }
 @media (max-width: 860px) {
-  .top nav { display: none; }
-  .search { margin-left: auto; }
   .trio, .pair, .road { grid-template-columns: 1fr; }
   .cols { grid-template-columns: minmax(0, 1fr); }  /* a plain 1fr column grows to fit the longest code line */
   .multiples { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lights, .mark .crumb { display: none; }
+  .status .opt { display: none; }
 }
 @media (max-width: 640px) {
-  .top .wrap { gap: 10px; }
+  .top .bar { gap: 8px; padding: 0 10px; }
   .mark span { display: none; }
-  .search { flex: 1; }
+  .search { flex: 1; margin: 0; }
   .search input { width: 100%; }
   .tiles { grid-template-columns: 1fr; }
   .multiples { grid-template-columns: 1fr; }
   .detail-grid, .detail-grid ul { grid-template-columns: 1fr; }
-  .board-card { padding: 4px 14px; }
+  .board-card .table-wrap { padding: 0 14px; }
+  .pane-tabs .meta { display: none; }
   #board thead { display: none; }
   #board tr.row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 16px; padding: 14px 0; border-top: 1px solid var(--rule); }
   #board td { border: 0; padding: 0; text-align: left; white-space: normal; }
   #board td.rank { display: none; }
   #board tr.row td:nth-child(2) { grid-column: 1 / -1; }
-  #board td[data-label]::before { content: attr(data-label); display: block; color: var(--muted); font-size: 12px; }
+  #board td[data-label]::before { content: attr(data-label); display: block; color: var(--muted); font: 11px var(--mono); text-transform: uppercase; }
   #board .idx { justify-content: flex-start; flex-direction: row-reverse; }
   #board tbody tr.row:hover td { background: none; }
-  .filter-pill { top: 64px; }
+  .status .opt2 { display: none; }
 }
 </style>
 </head>
 <body>
 <header class="top">
-  <div class="wrap">
+  <div class="bar">
+    <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
     <a class="mark" href="./" aria-label="System One Bench home">
-      <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 26 26" aria-hidden="true">
         <rect x="1" y="7" width="24" height="12" rx="6" fill="none" stroke="currentColor" stroke-width="2"/>
         <rect x="4" y="10" width="13" height="6" rx="3" fill="currentColor"/>
       </svg>
-      <span>System One Bench</span>
+      <span>system-one-bench <span class="crumb">— main</span></span>
     </a>
-    <nav aria-label="Sections"><a href="#leaderboard">Leaderboard</a><a href="#index">Text</a><a href="#vision">Vision</a><a href="#datasets" class="opt">Datasets</a><a href="benchmarks/" class="opt">Benchmarks</a><a href="#roadmap" class="opt">Roadmap</a><a href="#method">Method</a><a href="https://github.com/alilibx/system-one-bench" class="opt">GitHub</a></nav>
     <label class="search">
-      <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
       <input id="q" type="search" placeholder="Search models or makers" autocomplete="off" spellcheck="false" aria-label="Search models or makers. Filters every chart and table.">
       <kbd>/</kbd>
     </label>
+    <a class="icon-btn" href="https://github.com/alilibx/system-one-bench" aria-label="GitHub repository"><svg width="17" height="17" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
     <button class="icon-btn" id="theme" type="button" aria-label="Switch between light and dark">
-      <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="7.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9 1.8a7.2 7.2 0 0 1 0 14.4z" fill="currentColor"/></svg>
+      <svg width="17" height="17" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="7.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9 1.8a7.2 7.2 0 0 1 0 14.4z" fill="currentColor"/></svg>
     </button>
   </div>
+  <nav aria-label="Sections"><a href="#leaderboard"><span class="ft tsv" aria-hidden="true">TSV</span>leaderboard.tsv</a><a href="#index"><span class="ft chart" aria-hidden="true">▤</span>index.chart</a><a href="#tradeoffs"><span class="ft chart" aria-hidden="true">▤</span>tradeoffs.chart</a><a href="#calibration"><span class="ft chart" aria-hidden="true">▤</span>calibration.chart</a><a href="#datasets"><span class="ft folder" aria-hidden="true">▸</span>datasets/</a><a href="#vision"><span class="ft folder" aria-hidden="true">▸</span>vision/</a><a href="benchmarks/"><span class="ft web" aria-hidden="true">◆</span>benchmarks/</a><a href="#roadmap"><span class="ft md" aria-hidden="true">M↓</span>ROADMAP.md</a><a href="#method"><span class="ft md" aria-hidden="true">M↓</span>METHOD.md</a></nav>
 </header>
+<aside class="side" aria-label="Explorer">
+  <p class="side-h">Explorer</p>
+  <ul class="tree">
+    <li class="dir">system-one-bench</li>
+    <li><a href="#leaderboard"><span class="ft tsv" aria-hidden="true">TSV</span>leaderboard.tsv</a></li>
+    <li class="dir" style="padding-left:28px">text</li>
+    <li><a href="#index" style="padding-left:46px"><span class="ft chart" aria-hidden="true">▤</span>index.chart</a></li>
+    <li><a href="#tradeoffs" style="padding-left:46px"><span class="ft chart" aria-hidden="true">▤</span>tradeoffs.chart</a></li>
+    <li><a href="#calibration" style="padding-left:46px"><span class="ft chart" aria-hidden="true">▤</span>calibration.chart</a></li>
+    <li><a href="#datasets" style="padding-left:46px"><span class="ft folder" aria-hidden="true">▸</span>datasets/</a></li>
+    <li><a href="#vision"><span class="ft folder" aria-hidden="true">▸</span>vision/</a></li>
+    <li><a href="benchmarks/"><span class="ft web" aria-hidden="true">◆</span>benchmarks/</a></li>
+    <li><a href="#roadmap"><span class="ft md" aria-hidden="true">M↓</span>ROADMAP.md</a></li>
+    <li><a href="#method"><span class="ft md" aria-hidden="true">M↓</span>METHOD.md</a></li>
+    <li><a href="results.json"><span class="ft json" aria-hidden="true">{}</span>results.json</a></li>
+    <li><a href="results_vision.json"><span class="ft json" aria-hidden="true">{}</span>results_vision.json</a></li>
+  </ul>
+  <p class="side-h"><span>Makers</span><span id="side-count"></span></p>
+  <ul class="side-makers" id="side-makers"></ul>
+</aside>
 <div class="filter-pill" id="filter-pill" role="status" hidden><span id="filter-pill-text"></span><button type="button" data-clear>Clear</button></div>
 
 <main class="wrap">
   <section class="hero" aria-live="polite">
-    <p class="eyebrow">Independent decision-model benchmark</p>
+    <p class="prompt"><b>~/system-one-bench</b> <span>$ s1bench leaders --tracks text,vision</span></p>
     <h1 id="headline">Loading the latest results.</h1>
     <p class="lede">System One models read a situation and answer typed questions in one fast call: yes or no, pick one option, or score a level, each with probabilities. Every model gets the same cases and the same request body, scored against each dataset's labels. Text and images are scored as two separate tracks.</p>
     <p class="stamp" id="stamp"></p>
@@ -315,7 +413,7 @@ footer { border-top: 1px solid var(--rule); margin-top: 56px; padding: 22px 0 40
       <div class="chips" id="maker-chips" role="group" aria-label="Filter by maker"></div>
       <p class="filter-status" id="filter-status" aria-live="polite"></p>
     </div>
-    <div class="card board-card"><div class="table-wrap"><table id="board"><thead></thead><tbody></tbody></table></div></div>
+    <div class="card board-card"><div class="pane-tabs"><span class="on"><span class="ft tsv" aria-hidden="true">TSV</span>leaderboard.tsv</span><span class="meta" id="board-meta"></span></div><div class="table-wrap"><table id="board"><thead></thead><tbody></tbody></table></div></div>
   </section>
 
   <section class="section" id="index">
@@ -401,8 +499,8 @@ footer { border-top: 1px solid var(--rule); margin-top: 56px; padding: 22px 0 40
           <li>Text and images are two tracks with two indexes: the System One Index over 16 text datasets, and the Vision Index over 5 image datasets. They rank models separately, so a model can lead one and not the other.</li>
           <li>Calibration error is top-label ECE over 10 bins. Log loss, Brier score and more are in <a href="results.json">results.json</a>.</li>
           <li>Cost is the summed <code>usage.cost</code> the API reports.</li>
-          <li>Latency depends on the network between caller and API, so every API model was timed again on 15 October from one cloud server, all 3,250 cases through OpenRouter with 8 requests in flight. Only latency comes from that run; accuracy, calibration and cost come from each model's original run. The models added on 25 October were timed in their own runs from a similar cloud server, also 8 in flight; Jev 1.14, run again alongside them as a control, measured 122 ms there against 136 ms on 15 October. The models added on 30 October ran from a machine where the same Jev 1.14 control took 492 ms, so they have no latency on the board. GLiDE, added on 2 November, ran on Fastino's own API from that machine, where the control took 521 ms, so it has none either; nor do Celeris-1 Decision and meraGPT's Decider 1, added on 8 November from another machine on their own APIs. Open-weight models ran locally, one call at a time: Laya on an Apple M5 GPU, the open-weight d1, d3, Kev and Naluri sizes on a 4-vCPU cloud CPU, and Dexy-Decision-9B, added on 11 November, on a cloud A100 GPU. Their timings aren't comparable with API round trips, so they stay out of the latency charts.</li>
-          <li>The vision track ran on 15 October from a cloud server, 8 requests in flight per model, and on 25 October, 30 October and 2 November for the models added then (the last two from a different machine, which doesn't change accuracy). It sends each image once, as a base64 PNG or JPEG in <code>state</code>, resized to fit every model's limits. Box answers count as right when they overlap the labelled box by at least half (IoU of 0.5 or more).</li>
+          <li>Latency depends on the network between caller and API, so every API model was timed again on 15 October from one cloud server, all 3,250 cases through OpenRouter with 8 requests in flight. Only latency comes from that run; accuracy, calibration and cost come from each model's original run. The models added on 25 October were timed in their own runs from a similar cloud server, also 8 in flight; Jev 1.14, run again alongside them as a control, measured 122 ms there against 136 ms on 15 October. The models added on 30 October ran from a machine where the same Jev 1.14 control took 492 ms, so they have no latency on the board. GLiDE, added on 2 November, ran on Fastino's own API from that machine, where the control took 521 ms, so it has none either; nor do Celeris-1 Decision and meraGPT's Decider 1, added on 8 November from another machine on their own APIs, or Gemini Decision 1, added on 11 November on Google's own API. Open-weight models ran locally, one call at a time: Laya on an Apple M5 GPU, the open-weight d1, d3, Kev and Naluri sizes on a 4-vCPU cloud CPU, and Dexy-Decision-9B, added on 11 November, on a cloud A100 GPU. Their timings aren't comparable with API round trips, so they stay out of the latency charts.</li>
+          <li>The vision track ran on 15 October from a cloud server, 8 requests in flight per model, and on 25 October, 30 October, 2 November and 11 November for the models added then (the last three from different machines, which doesn't change accuracy). It sends each image once, as a base64 PNG or JPEG in <code>state</code>, resized to fit every model's limits. Box answers count as right when they overlap the labelled box by at least half (IoU of 0.5 or more).</li>
           <li>The data is frozen: <a href="https://github.com/alilibx/system-one-bench/blob/main/data.lock.json">data.lock.json</a> holds a SHA-256 for every dataset and image, every source is pinned to a fixed version, and runs are refused on data that doesn't match.</li>
           <li>Nothing was tuned on test data. A model marked <b>in-domain</b> trained on another split of some of the datasets tested here, as its maker disclosed: open a row to see which datasets, and its index without them, ranked against every model on those same datasets. Its index still counts all 16, like every other model's. Models whose training data isn't published may overlap too; we can't tell.</li>
           <li>A score marked <b>unusually high</b> is far above what that model's other datasets, and every other model's score on that dataset, predict: at least 10 points, and 3.5 times the usual spread once sampling noise is counted. It often means the model trained on that dataset or one like it, disclosed or not. It isn't proof, no flag isn't proof of the opposite, and the score still counts. The <a href="benchmarks/">benchmark pages</a> give the numbers.</li>
@@ -431,6 +529,15 @@ python score.py preds_or_jev.jsonl preds_luna.jsonl</pre>
   </footer>
 </main>
 <div class="tip" id="tip" hidden></div>
+<div class="status" aria-label="Benchmark status">
+  <span class="live">live</span>
+  <a href="https://github.com/alilibx/system-one-bench/releases" class="opt">⎇ main</a>
+  <span id="st-runs"></span>
+  <span id="st-data" class="opt2"></span>
+  <span id="st-updated" class="opt"></span>
+  <a class="right opt" href="https://github.com/alilibx/system-one-bench/blob/main/CONTRIBUTING.md">rules</a>
+  <span class="opt">CC BY 4.0</span>
+</div>
 
 <script>
 const $ = id => document.getElementById(id);
@@ -457,7 +564,7 @@ Promise.all([fetch("results.json").then(r => r.json()), fetch("meta.json").then(
   });
 
 // Shown under every latency chart: what the numbers include, and why yours will differ.
-const LATENCY_NOTE = "About these numbers: latency is the full round trip from our test machine, a cloud server, through OpenRouter to the model and back, so it includes the network as well as the model. Every API model was timed from that machine on 15 October 2026 with 8 calls in flight, and the models added on 25 October from a similar cloud server, where a control run of Jev 1.14 was within 10% of its 15 October time, so they compare fairly with each other (the models added on 30 October, 2 November and 8 November ran from machines that don't compare, so they have no latency here), but your own latency depends on where you call from: from the machine behind our earlier runs, the same calls took 1.5 to 3.5 times as long. Open-weight models run locally with no network (Laya on an Apple M5 GPU, Dexy-Decision-9B on a cloud A100 GPU, the others on a 4-vCPU cloud CPU), so they aren't comparable and stay out of the latency charts; their local timings are in the leaderboard.";
+const LATENCY_NOTE = "About these numbers: latency is the full round trip from our test machine, a cloud server, through OpenRouter to the model and back, so it includes the network as well as the model. Every API model was timed from that machine on 15 October 2026 with 8 calls in flight, and the models added on 25 October from a similar cloud server, where a control run of Jev 1.14 was within 10% of its 15 October time, so they compare fairly with each other (the models added on 30 October, 2 November, 8 November and 11 November ran from machines that don't compare, so they have no latency here), but your own latency depends on where you call from: from the machine behind our earlier runs, the same calls took 1.5 to 3.5 times as long. Open-weight models run locally with no network (Laya on an Apple M5 GPU, Dexy-Decision-9B on a cloud A100 GPU, the others on a 4-vCPU cloud CPU), so they aren't comparable and stay out of the latency charts; their local timings are in the leaderboard.";
 document.querySelectorAll(".latency-note").forEach(el => { el.textContent = LATENCY_NOTE; });
 
 // ---------- data ----------
@@ -487,6 +594,12 @@ const flagTag = k => FLAGS[k] ? `<span class="tag flag" title="${esc(Object.entr
 const idTag = k => inDomain(k).length ? `<span class="tag" title="Trained on other splits of ${inDomain(k).length} of the datasets tested here: ${esc(inDomain(k).map(s => M.suites[s].label).join(", "))}">in-domain</span>` : "";
 const per1k = k => R[k].cost && R[k].cost.usd != null ? 1000 * R[k].cost.usd / R[k].cost.calls : null;
 const color = k => `var(--s${M.models[k].series}, var(--muted))`;
+// A maker's logo on a white tile, with the model's chart color as a corner dot; a monogram when there's no logo.
+const initials = m => { const w = m.split(/\s+/); return (w.length > 1 ? w[0][0] + w[1][0] : w[0].slice(0, 2)).toUpperCase(); };
+const makerLogo = (m, c, size = "") => M.logos?.[m]
+  ? `<span class="logo ${size}" style="--c:${c}" title="${esc(m)}"><img src="${esc(M.logos[m])}" alt="" loading="lazy"></span>`
+  : `<span class="logo mono ${size}" style="--c:${c}" title="${esc(m)}" aria-hidden="true">${esc(initials(m))}</span>`;
+const logo = (k, size) => makerLogo(M.models[k].maker, color(k), size);
 const vsuites = () => Object.keys(M.vision?.suites || {});
 const vval = (k, s, key = "acc") => V?.[k]?.["suite:" + s]?.[key];
 const vruns = () => V ? Object.keys(M.models).filter(k => V[k] && M.models[k].chart !== false) : [];
@@ -528,7 +641,7 @@ function clearFilters() { query = ""; makers.clear(); $("q").value = ""; applyFi
 
 function applyFilter() {
   writeUrl();
-  $("maker-chips").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(makers.has(b.dataset.maker))));
+  document.querySelectorAll("#maker-chips button, #side-makers button").forEach(b => b.setAttribute("aria-pressed", String(makers.has(b.dataset.maker))));
   const all = runs(), n = all.filter(shown).length;
   const what = [words().length ? `matching “${esc(query.trim())}”` : "", makers.size ? `from ${[...makers].map(esc).join(" or ")}` : ""].filter(Boolean).join(" ");
   $("filter-status").innerHTML = filtering() ? `Showing ${n} of ${all.length} runs ${what}. <button type="button" data-clear>Clear</button>` : `${all.length} runs. Type in the search box or pick makers to narrow every chart.`;
@@ -697,6 +810,7 @@ function render() {
   readUrl();
   $("stamp").textContent = `Updated ${date(updated())}. ${runs().length} model runs across ${suites("all").length} text datasets` + (vruns().length ? ` and ${vsuites().length} image datasets.` : ".");
   $("foot-updated").textContent = `Last run ${date(updated())}`;
+  renderShell();
   $("legend").innerHTML = [...new Set(charted().map(k => M.models[k].series))].map(sr => `<li><i style="background:var(--s${sr}, var(--muted))"></i>${esc(M.series[sr] || M.models[charted().find(k => M.models[k].series === sr)].maker)}</li>`).join("");
   if (unlisted().length) $("leaderboard").insertAdjacentHTML("beforeend", `<p class="na">Not shown: ${unlisted().map(esc).join(", ")}. Add an entry to site/meta.json to include a run.</p>`);
   renderChips(); renderRoadmap(); renderHeadline(); renderTiles();
@@ -720,7 +834,7 @@ function renderHeadline() {
 function renderTiles() {
   const t = textRanking(), v = visionRanking(), n = suites("all").length;
   const tile = (href, k, label, value, unit, ctx) => `<a class="tile" href="${href}"><div class="k">${label}</div>
-    <div class="who"><i style="background:${color(k)}"></i><span>${esc(M.models[k].label)}</span></div>
+    <div class="who">${logo(k)}<span>${esc(M.models[k].label)}</span></div>
     <div class="v">${value}${unit ? `<small>${unit}</small>` : ""}</div><div class="ctx">${ctx}</div></a>`;
   const out = [];
   if (t.length) {
@@ -755,7 +869,7 @@ function renderChips() {
   const ms = [...new Set(runs().sort((a, b) => rank(a) - rank(b)).map(k => M.models[k].maker))];
   $("maker-chips").innerHTML = ms.map(m => {
     const k = runs().find(x => M.models[x].maker === m);
-    return `<button type="button" data-maker="${esc(m)}" aria-pressed="false"><i style="background:${color(k)}"></i>${esc(m)}</button>`;
+    return `<button type="button" data-maker="${esc(m)}" aria-pressed="false">${logo(k, "sm")}${esc(m)}</button>`;
   }).join("");
   $("maker-chips").querySelectorAll("button").forEach(b => b.onclick = () => {
     makers.has(b.dataset.maker) ? makers.delete(b.dataset.maker) : makers.add(b.dataset.maker);
@@ -826,7 +940,7 @@ function renderVisionTables() {
   const all = vruns();
   if (!all.length) return;
   const ks = all.filter(shown);
-  const name = k => `<div class="model"><i style="background:${color(k)}"></i><span><b>${highlight(M.models[k].label)}</b><small>${highlight(M.models[k].maker)}</small></span></div>`;
+  const name = k => `<div class="model">${logo(k)}<span><b>${highlight(M.models[k].label)}</b><small>${highlight(M.models[k].maker)}</small></span></div>`;
   const pct = v => v == null ? '<span class="na">–</span>' : (100 * v).toFixed(1);
   const gap = (t, i) => {
     if (t == null || i == null) return '<span class="na">–</span>';
@@ -902,7 +1016,7 @@ function renderBoard() {
     const bar = (v, k, top) => `<span class="idx${top ? " top1" : ""}">${fmtIdx(v)}<span style="--w:${v.toFixed(1)}%;--c:${color(k)}"></span></span>`;
     return `<tr class="row${x.m.chart === false ? " dim" : ""}" data-k="${esc(x.k)}">
       <td class="rank">${rank ?? ""}</td>
-      <td><div class="model"><button type="button" class="more" aria-expanded="${isOpen}" aria-controls="d-${esc(x.k)}"><i style="background:${color(x.k)}"></i><span><b>${highlight(x.m.label)}${x.m.tag ? `<span class="tag">${esc(x.m.tag)}</span>` : ""}${idTag(x.k)}${flagTag(x.k)}</b><small>${highlight(x.m.maker)}, ${highlight(x.m.access)}${x.r.all.failed ? `<span class="fail">${x.r.all.failed.toLocaleString("en")} failed, counted wrong</span>` : ""}</small></span></button></div></td>
+      <td><div class="model"><button type="button" class="more" aria-expanded="${isOpen}" aria-controls="d-${esc(x.k)}">${logo(x.k)}<span><b>${highlight(x.m.label)}${x.m.tag ? `<span class="tag">${esc(x.m.tag)}</span>` : ""}${idTag(x.k)}${flagTag(x.k)}</b><small>${highlight(x.m.maker)}, ${highlight(x.m.access)}${x.r.all.failed ? `<span class="fail">${x.r.all.failed.toLocaleString("en")} failed, counted wrong</span>` : ""}</small></span></button></div></td>
       ${cell("Index", x.idx != null ? bar(x.idx, x.k, x.k === topText) : dash)}
       ${cell("English", index(x.k, "English") != null ? fmtIdx(index(x.k, "English")) : dash)}
       ${cell("Arabic", index(x.k, "Arabic") != null ? fmtIdx(index(x.k, "Arabic")) : dash)}
@@ -977,13 +1091,35 @@ function renderRoadmap() {
     g.items.map(i => `<li><b>${esc(i.name)}</b>${i.access ? `<code>${esc(i.access)}</code>` : ""}<span>${esc(i.note)}</span></li>`).join("")}</ul></div>`).join("");
 }
 
+// The explorer's maker list and the status bar.
+function renderShell() {
+  const t = textRanking(), rank = k => { const i = t.indexOf(k); return i < 0 ? 999 : i; };
+  const counts = {};
+  runs().forEach(k => { counts[M.models[k].maker] = (counts[M.models[k].maker] || 0) + 1; });
+  const ms = [...new Set(runs().sort((a, b) => rank(a) - rank(b)).map(k => M.models[k].maker))];
+  $("side-count").textContent = ms.length;
+  $("side-makers").innerHTML = ms.map(m => {
+    const k = runs().find(x => M.models[x].maker === m);
+    return `<li><button type="button" data-maker="${esc(m)}" aria-pressed="${makers.has(m)}">${logo(k, "sm")}<span>${esc(m)}</span><em>${counts[m]}</em></button></li>`;
+  }).join("");
+  $("side-makers").querySelectorAll("button").forEach(b => b.onclick = () => {
+    makers.has(b.dataset.maker) ? makers.delete(b.dataset.maker) : makers.add(b.dataset.maker);
+    applyFilter();
+  });
+  const sha = Object.values(R).map(r => r.data_sha256).find(Boolean);
+  $("st-runs").textContent = `${runs().length} runs · ${suites("all").length} text + ${vsuites().length} image datasets`;
+  $("st-data").textContent = sha ? `data ${sha.slice(0, 7)} ✓ locked` : "";
+  $("st-updated").textContent = `updated ${updated()}`;
+  $("board-meta").textContent = `${runs().length} rows · sorted by column`;
+}
+
 // Marks the nav link of the section on screen.
 function watchNav() {
   if (!("IntersectionObserver" in window)) return;
-  const links = [...document.querySelectorAll(".top nav a[href^='#']")];
+  const links = [...document.querySelectorAll(".top nav a[href^='#'], .tree a[href^='#']")];
   const io = new IntersectionObserver(es => es.forEach(e => {
     if (!e.isIntersecting) return;
-    const id = e.target.id === "tradeoffs" || e.target.id === "calibration" ? "index" : e.target.id;
+    const id = e.target.id;
     links.forEach(a => a.setAttribute("aria-current", String(a.getAttribute("href") === "#" + id)));
   }), { rootMargin: "-40% 0px -55% 0px" });
   document.querySelectorAll("main .section[id]").forEach(s => io.observe(s));
