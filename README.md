@@ -78,6 +78,7 @@ Models covered so far:
 | d3 edge, lite and nano (`vllm-sr/d3-{edge,lite,nano}`) | vLLM Semantic Router | open weights, llama.cpp on a 4-vCPU CPU | 2026-10-17, 2026-10-18 |
 | Kev 0.8B (`jaredpalmer/kev-0.8b`) | Jared Palmer | open weights, llama.cpp on a 4-vCPU CPU | 2026-10-18 |
 | Naluri-279M and Naluri-308M (`jerichosiahaya/Naluri-{279M,308M}-encoder`) | Jericho Siahaya | open weights, PyTorch on a 4-vCPU CPU | 2026-10-17 |
+| Dexy-Decision-9B (`Patrick-18/Dexy-Decision-9B`) | Patrick-18 | open weights, the maker's vLLM adapter on a cloud A100 GPU | 2026-11-11 |
 
 Every API model is called at `POST https://openrouter.ai/api/alpha/decisions`, so they all share one gateway.
 
@@ -113,7 +114,8 @@ OPENROUTER_API_KEY=<your key> .venv/bin/python run_decisions.py --model typesafe
 - [Licence and citation](#licence-and-citation) · [Results site](#results-site) · [Roadmap](#roadmap) · [Live race](#live-race)
 - [Frozen data](#frozen-data) · [Full benchmark](#full-benchmark) · [Vision track](#vision-track) ·
   [Open-weight models, run locally](#open-weight-models-run-locally)
-- Rounds: [11, Celeris-1 and Decider 1 on their own APIs](#round-11-celeris-1-decision-and-meragpt-decider-1-on-their-own-apis-2026-11-08) ·
+- Rounds: [12, Dexy-Decision-9B and in-domain tags](#round-12-dexy-decision-9b-on-a-gpu-and-in-domain-tags-2026-11-11) ·
+  [11, Celeris-1 and Decider 1 on their own APIs](#round-11-celeris-1-decision-and-meragpt-decider-1-on-their-own-apis-2026-11-08) ·
   [10, Fastino GLiDE on its own API](#round-10-fastino-glide-on-its-own-api-2026-11-02) ·
   [9, four more from OpenRouter](#round-9-four-more-models-from-openrouter-2026-10-30) ·
   [8, seven more from OpenRouter](#round-8-seven-more-models-from-openrouter-2026-10-25) ·
@@ -382,6 +384,53 @@ The other open models need their own runners:
 A 24 GB Mac fits everything up to 9B at Q8. The 27B models (Kev 27B, d3 27B, Open-Jev 27B) and Open-Jev 9B, whose base
 model alone is 19 GB, need a bigger machine. Laya Multilingual is already covered: Laya Router sends every non-English
 state, Arabic and French included, to those same weights.
+
+## Round 12: Dexy-Decision-9B on a GPU, and in-domain tags (2026-11-11)
+
+Dexy-Decision-9B, an independent fine-tune of Qwen3.5-9B, was [requested by its developer](https://github.com/alilibx/system-one-bench/issues/29).
+It ran on 11 November on all 3,250 text cases from a rented cloud GPU (one NVIDIA A100 80 GB on RunPod), at revision
+`afee4ba`, through the maker's own vLLM adapter (`deployment/vllm/start.sh`, vLLM 0.32.0, default settings), which
+answers `POST /v1/systemone`. `run_decisions.py --url` sent it the same bodies as every other model, 8 calls in flight.
+Every call succeeded.
+
+| Model | Maker | Weights (revision) | Index | Without in-domain datasets | English | Arabic | Calibration error | Median latency, GPU |
+|---|---|---|---|---|---|---|---|---|
+| Dexy-Decision-9B | Patrick-18 | `Patrick-18/Dexy-Decision-9B` (`afee4ba`), 17.9 GB, BF16 | 84.7 (1st) | 83.4 (7th of 38, 12 datasets) | 82.3 (6th) | 86.8 (2nd) | 3.5% | 62 ms |
+
+Ranks are out of the 38 models on the System One Index.
+
+- **It has the top index, 84.7, but it isn't clearly the best model.** It leads Decider V1.2 by 0.07 points (84.71
+  against 84.63), and 4 of its 16 datasets are in-domain. Its developer reported fine-tuning on the train splits of
+  typed-decisions and Banking77, and on MASSIVE's English and Chinese train splits, so the Arabic MASSIVE datasets share
+  its training labels in another language. It's 1st on typed-decisions (80.0%) and tied 1st on both Arabic MASSIVE
+  datasets (89.5% scenario, 91.5% intent).
+- **On the other 12 datasets it averages 83.4, 7th**, against Decider V1.2 and Drex Max at 85.1. Without only
+  typed-decisions and Banking77 it averages 84.5, 2nd.
+- **It didn't see our test cases.** None of our 200 Banking77 or 400 typed-decisions cases appear in those train
+  splits. But 100 of the 400 typed-decisions cases share their task text with a train example (with different details
+  around it), so training on that split helps on its test split.
+- **It matches the developer's own run.** They reported 84.82 on the same 3,250 cases from an A800 GPU; this run
+  measured 84.71. Only this run's numbers are on the board.
+- **Its weakest dataset is DAIR Emotion** (54.0%, 35th). It's 15th on calibration (3.5%).
+- **Latency isn't comparable** with the API models: it's a local GPU with no network. The board's figure is the
+  one-call-at-a-time probe (90 single-question calls, 62 ms median, 172 ms at the 95th percentile), not the run with 8 in
+  flight, and like the other open-weight models it stays out of the latency charts.
+- **No vision score.** It reads text only, so it's listed under `vision.no_image`.
+
+**In-domain tags.** A model whose maker says it trained on another split of a dataset we test is now marked
+**in-domain** on the leaderboard, and its row and page list those datasets with its index without them, ranked
+against every model on the same datasets. Its System One Index still counts all 16, like every other model's. The
+tags come from what each maker published (`in_domain` in `site/meta.json`):
+
+| Model | In-domain datasets | Source |
+|---|---|---|
+| Dexy-Decision-9B | typed-decisions, Banking77, Arabic MASSIVE scenario and intent | the developer, in #29 |
+| Kev 4B, Kev 0.8B | AG News, SST-5, Banking77, BoolQ | the model cards' training datasets |
+| Naluri-308M, Naluri-279M | XNLI English, French and Arabic, Arabic MASSIVE scenario and intent, DAIR Emotion | the model cards |
+| laya-ara | XNLI Arabic, Arabic MASSIVE scenario and intent, OSACT4 offensive | [Laya Arabic fine-tunes](#laya-arabic-fine-tunes-vs-jev-2026-09-25) |
+| laya-ara-rag | Arabic MIRACL reranking and pairs, Arabic MASSIVE scenario and intent | [Laya Arabic fine-tunes](#laya-arabic-fine-tunes-vs-jev-2026-09-25) |
+
+Models that don't publish their training data may overlap too; we can't tell, so they carry no tag.
 
 ## Round 11: Celeris-1 Decision and meraGPT Decider 1 on their own APIs (2026-11-08)
 

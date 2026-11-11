@@ -398,10 +398,10 @@ footer { border-top: 1px solid var(--rule); margin-top: 56px; padding: 22px 0 40
           <li>Text and images are two tracks with two indexes: the System One Index over 16 text datasets, and the Vision Index over 5 image datasets. They rank models separately, so a model can lead one and not the other.</li>
           <li>Calibration error is top-label ECE over 10 bins. Log loss, Brier score and more are in <a href="results.json">results.json</a>.</li>
           <li>Cost is the summed <code>usage.cost</code> the API reports.</li>
-          <li>Latency depends on the network between caller and API, so every API model was timed again on 15 October from one cloud server, all 3,250 cases through OpenRouter with 8 requests in flight. Only latency comes from that run; accuracy, calibration and cost come from each model's original run. The models added on 25 October were timed in their own runs from a similar cloud server, also 8 in flight; Jev 1.14, run again alongside them as a control, measured 122 ms there against 136 ms on 15 October. The models added on 30 October ran from a machine where the same Jev 1.14 control took 492 ms, so they have no latency on the board. GLiDE, added on 2 November, ran on Fastino's own API from that machine, where the control took 521 ms, so it has none either; nor do Celeris-1 Decision and meraGPT's Decider 1, added on 8 November from another machine on their own APIs. Open-weight models ran locally, one call at a time: Laya on an Apple M5 GPU, and the open-weight d1, d3, Kev and Naluri sizes on a 4-vCPU cloud CPU. Their timings aren't comparable with API round trips, so they stay out of the latency charts.</li>
+          <li>Latency depends on the network between caller and API, so every API model was timed again on 15 October from one cloud server, all 3,250 cases through OpenRouter with 8 requests in flight. Only latency comes from that run; accuracy, calibration and cost come from each model's original run. The models added on 25 October were timed in their own runs from a similar cloud server, also 8 in flight; Jev 1.14, run again alongside them as a control, measured 122 ms there against 136 ms on 15 October. The models added on 30 October ran from a machine where the same Jev 1.14 control took 492 ms, so they have no latency on the board. GLiDE, added on 2 November, ran on Fastino's own API from that machine, where the control took 521 ms, so it has none either; nor do Celeris-1 Decision and meraGPT's Decider 1, added on 8 November from another machine on their own APIs. Open-weight models ran locally, one call at a time: Laya on an Apple M5 GPU, the open-weight d1, d3, Kev and Naluri sizes on a 4-vCPU cloud CPU, and Dexy-Decision-9B, added on 11 November, on a cloud A100 GPU. Their timings aren't comparable with API round trips, so they stay out of the latency charts.</li>
           <li>The vision track ran on 15 October from a cloud server, 8 requests in flight per model, and on 25 October, 30 October and 2 November for the models added then (the last two from a different machine, which doesn't change accuracy). It sends each image once, as a base64 PNG or JPEG in <code>state</code>, resized to fit every model's limits. Box answers count as right when they overlap the labelled box by at least half (IoU of 0.5 or more).</li>
           <li>The data is frozen: <a href="https://github.com/alilibx/system-one-bench/blob/main/data.lock.json">data.lock.json</a> holds a SHA-256 for every dataset and image, every source is pinned to a fixed version, and runs are refused on data that doesn't match.</li>
-          <li>Nothing was tuned on test data. Some open-weight fine-tunes trained on related data; the repo README lists which.</li>
+          <li>Nothing was tuned on test data. A model marked <b>in-domain</b> trained on another split of some of the datasets tested here, as its maker disclosed: open a row to see which datasets, and its index without them, ranked against every model on those same datasets. Its index still counts all 16, like every other model's. Models whose training data isn't published may overlap too; we can't tell.</li>
         </ul>
       </div>
       <div>
@@ -448,7 +448,7 @@ Promise.all([fetch("results.json").then(r => r.json()), fetch("meta.json").then(
   });
 
 // Shown under every latency chart: what the numbers include, and why yours will differ.
-const LATENCY_NOTE = "About these numbers: latency is the full round trip from our test machine, a cloud server, through OpenRouter to the model and back, so it includes the network as well as the model. Every API model was timed from that machine on 15 October 2026 with 8 calls in flight, and the models added on 25 October from a similar cloud server, where a control run of Jev 1.14 was within 10% of its 15 October time, so they compare fairly with each other (the models added on 30 October, 2 November and 8 November ran from machines that don't compare, so they have no latency here), but your own latency depends on where you call from: from the machine behind our earlier runs, the same calls took 1.5 to 3.5 times as long. Open-weight models run locally with no network (Laya on an Apple M5 GPU, the others on a 4-vCPU cloud CPU), so they aren't comparable and stay out of the latency charts; their local timings are in the leaderboard.";
+const LATENCY_NOTE = "About these numbers: latency is the full round trip from our test machine, a cloud server, through OpenRouter to the model and back, so it includes the network as well as the model. Every API model was timed from that machine on 15 October 2026 with 8 calls in flight, and the models added on 25 October from a similar cloud server, where a control run of Jev 1.14 was within 10% of its 15 October time, so they compare fairly with each other (the models added on 30 October, 2 November and 8 November ran from machines that don't compare, so they have no latency here), but your own latency depends on where you call from: from the machine behind our earlier runs, the same calls took 1.5 to 3.5 times as long. Open-weight models run locally with no network (Laya on an Apple M5 GPU, Dexy-Decision-9B on a cloud A100 GPU, the others on a 4-vCPU cloud CPU), so they aren't comparable and stay out of the latency charts; their local timings are in the leaderboard.";
 document.querySelectorAll(".latency-note").forEach(el => { el.textContent = LATENCY_NOTE; });
 
 // ---------- data ----------
@@ -465,6 +465,16 @@ function index(k, set = "all") {
   if (ss.some(s => val(k, s) == null)) return null;
   return 100 * ss.reduce((a, s) => a + val(k, s), 0) / ss.length;
 }
+// Datasets a model trained on another split of (its maker's disclosure), and its index without them, ranked against
+// every charted model on that same set of datasets.
+const inDomain = k => M.models[k].in_domain || [];
+function indexWithout(k) {
+  const drop = new Set(inDomain(k)), ss = suites("all").filter(s => !drop.has(s));
+  const mean = x => ss.some(s => val(x, s) == null) ? null : 100 * ss.reduce((a, s) => a + val(x, s), 0) / ss.length;
+  const me = mean(k), vs = charted().filter(x => index(x) != null).map(mean).filter(v => v != null);
+  return { v: me, n: ss.length, r: me == null ? null : 1 + vs.filter(v => v > me).length, of: vs.length };
+}
+const idTag = k => inDomain(k).length ? `<span class="tag" title="Trained on other splits of ${inDomain(k).length} of the datasets tested here: ${esc(inDomain(k).map(s => M.suites[s].label).join(", "))}">in-domain</span>` : "";
 const per1k = k => R[k].cost && R[k].cost.usd != null ? 1000 * R[k].cost.usd / R[k].cost.calls : null;
 const color = k => `var(--s${M.models[k].series}, var(--muted))`;
 const vsuites = () => Object.keys(M.vision?.suites || {});
@@ -882,7 +892,7 @@ function renderBoard() {
     const bar = (v, k, top) => `<span class="idx${top ? " top1" : ""}">${fmtIdx(v)}<span style="--w:${v.toFixed(1)}%;--c:${color(k)}"></span></span>`;
     return `<tr class="row${x.m.chart === false ? " dim" : ""}" data-k="${esc(x.k)}">
       <td class="rank">${rank ?? ""}</td>
-      <td><div class="model"><button type="button" class="more" aria-expanded="${isOpen}" aria-controls="d-${esc(x.k)}"><i style="background:${color(x.k)}"></i><span><b>${highlight(x.m.label)}${x.m.tag ? `<span class="tag">${esc(x.m.tag)}</span>` : ""}</b><small>${highlight(x.m.maker)}, ${highlight(x.m.access)}${x.r.all.failed ? `<span class="fail">${x.r.all.failed.toLocaleString("en")} failed, counted wrong</span>` : ""}</small></span></button></div></td>
+      <td><div class="model"><button type="button" class="more" aria-expanded="${isOpen}" aria-controls="d-${esc(x.k)}"><i style="background:${color(x.k)}"></i><span><b>${highlight(x.m.label)}${x.m.tag ? `<span class="tag">${esc(x.m.tag)}</span>` : ""}${idTag(x.k)}</b><small>${highlight(x.m.maker)}, ${highlight(x.m.access)}${x.r.all.failed ? `<span class="fail">${x.r.all.failed.toLocaleString("en")} failed, counted wrong</span>` : ""}</small></span></button></div></td>
       ${cell("Index", x.idx != null ? bar(x.idx, x.k, x.k === topText) : dash)}
       ${cell("English", index(x.k, "English") != null ? fmtIdx(index(x.k, "English")) : dash)}
       ${cell("Arabic", index(x.k, "Arabic") != null ? fmtIdx(index(x.k, "Arabic")) : dash)}
@@ -914,7 +924,8 @@ function detail(x) {
   const rankIn = (get, k) => { const vs = cmpSet.map(get).filter(v => v != null); const me = get(k); return { r: 1 + vs.filter(v => v > me).length, n: vs.length, best: me === Math.max(...vs) }; };
   const li = (label, v, rk) => `<li class="${rk.best ? "best" : ""}"><span>${esc(label)}</span><span><b>${(100 * v).toFixed(1)}</b><em>${ordinal(rk.r)}/${rk.n}</em></span></li>`;
   const text = Object.keys(M.suites).filter(s => val(x.k, s) != null)
-    .map(s => li(M.suites[s].label + (M.suites[s].lang !== "English" && !M.suites[s].label.includes(M.suites[s].lang) ? ` (${M.suites[s].lang})` : ""), val(x.k, s), rankIn(k => val(k, s), x.k))).join("");
+    .map(s => li(M.suites[s].label + (M.suites[s].lang !== "English" && !M.suites[s].label.includes(M.suites[s].lang) ? ` (${M.suites[s].lang})` : "") + (inDomain(x.k).includes(s) ? ", in-domain" : ""), val(x.k, s), rankIn(k => val(k, s), x.k))).join("");
+  const wo = inDomain(x.k).length ? indexWithout(x.k) : null;
   const vis = V?.[x.k] ? vsuites().filter(s => vval(x.k, s) != null)
     .map(s => li(M.vision.suites[s].label, vval(x.k, s), rankIn(k => vruns().includes(k) ? vval(k, s) : null, x.k))).join("") : "";
   const box = V?.[x.k] ? Object.keys(M.vision?.box || {}).filter(s => vval(x.k, s) != null)
@@ -929,6 +940,7 @@ function detail(x) {
       <dt>Latency</dt><dd>${esc(m.latency)}${x.r.latency_ms ? `, ${fmtMs(x.r.latency_ms.p50)} median, ${fmtMs(x.r.latency_ms.p95)} 95th percentile` : ""}</dd>
       <dt>Accuracy</dt><dd>${(100 * x.r.all.acc).toFixed(1)}% over all ${x.r.all.n.toLocaleString("en")} questions</dd>
       <dt>Datasets</dt><dd>${x.cover} of ${suites("all").length} text${V?.[x.k] ? `, ${vsuites().filter(s => vval(x.k, s) != null).length} of ${vsuites().length} image` : ""}</dd>
+      ${wo ? `<dt>In-domain</dt><dd>${esc(inDomain(x.k).map(s => M.suites[s].label).join(", "))}. ${esc(m.in_domain_source || "")}${wo.v != null ? ` Without them: ${fmtIdx(wo.v)} over ${wo.n} datasets, ${ordinal(wo.r)} of ${wo.of} on the same datasets.` : ""}</dd>` : ""}
     </dl>${m.note ? `<p>${esc(m.note)}</p>` : ""}${PAGES[x.k] ? `<p><a href="${esc(PAGES[x.k])}">Full results page and comparisons →</a></p>` : ""}</div>
     <div><h4>Text datasets, accuracy and rank</h4><ul>${text}</ul></div>
     <div class="vision-only"><h4>Image datasets</h4>${vis || box ? `<ul>${vis}${box}</ul>` : `<p>${noImage ? "Rejects image input, so it has no vision score." : "Not run on the vision track."}</p>`}</div>
