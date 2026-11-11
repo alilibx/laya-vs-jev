@@ -469,6 +469,17 @@
       "latency": "API; not timed (round 11 ran on meraGPT's own API from a machine whose round trips don't compare with the board's)",
       "short": "meraGPT Decider 1",
       "note": "Rejects any question with more than 10 options, so all 200 cases each of Banking77 (77 options), Arabic MASSIVE scenario (18) and Arabic MASSIVE intent (20) count as wrong; on the other 13 datasets it averages 75.5. Its 4,096-token cap rejects every image, so it has no vision score. The API takes state-decider-1 or decider-1 and reports decider-1. Cost is as billed, rounded to the millionth of a dollar per call. Its latency, not timed for the board, was about 10 seconds a call."
+    },
+    "dexy_decision_9b": {
+      "label": "Dexy-Decision-9B",
+      "maker": "Patrick-18",
+      "access": "Open weights, local",
+      "slug": "Patrick-18/Dexy-Decision-9B",
+      "run": "2026-11-11",
+      "series": 9,
+      "latency": "Cloud A100 80 GB GPU, the maker's vLLM adapter, one call at a time (90 calls)",
+      "short": "Dexy 9B",
+      "note": "Independent fine-tune of Qwen3.5-9B, Apache 2.0, run at revision afee4ba through the maker's vLLM /v1/systemone adapter. Two datasets are in-domain: it was fine-tuned on the train splits of typed-decisions and Banking77 (we test their test splits), and on MASSIVE's English and Chinese train splits, the same task as the Arabic MASSIVE datasets. Without typed-decisions and Banking77 it averages 84.5, 0.6 behind Decider V1.2's 85.1. Text only."
     }
   },
   "languages": [
@@ -706,7 +717,8 @@
       "mammoth1",
       "elephant1",
       "celeris1",
-      "meragpt_decider1"
+      "meragpt_decider1",
+      "dexy_decision_9b"
     ]
   }
 }
