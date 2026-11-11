@@ -62,7 +62,14 @@
       "run": "2026-09-25",
       "series": 3,
       "latency": "Apple M5 GPU, one at a time",
-      "short": "laya-ara"
+      "short": "laya-ara",
+      "in_domain": [
+        "xnli_ar",
+        "ar_massive_scenario",
+        "ar_massive_intent",
+        "ar_offensive"
+      ],
+      "in_domain_source": "Fine-tuned on Arabic XNLI, MASSIVE and OSACT4 offensive-language training data."
     },
     "laya_ara-rag": {
       "label": "laya-ara-rag",
@@ -72,7 +79,14 @@
       "run": "2026-09-25",
       "series": 3,
       "latency": "Apple M5 GPU, one at a time",
-      "short": "ara-rag"
+      "short": "ara-rag",
+      "in_domain": [
+        "ar_miracl_rerank",
+        "ar_miracl_pair",
+        "ar_massive_scenario",
+        "ar_massive_intent"
+      ],
+      "in_domain_source": "Fine-tuned on MIRACL training data, with a small MASSIVE Arabic sample."
     },
     "pplx": {
       "label": "Decider V1 27B",
@@ -147,7 +161,14 @@
       "series": 9,
       "short": "Kev",
       "run": "2026-10-07",
-      "latency": "API, 8 in flight, timed 15 October 2026"
+      "latency": "API, 8 in flight, timed 15 October 2026",
+      "in_domain": [
+        "ag_news",
+        "sst5",
+        "banking77",
+        "boolq"
+      ],
+      "in_domain_source": "Its model card lists AG News, SST-5, Banking77 and BoolQ among its training datasets."
     },
     "tev1": {
       "label": "Tev1 4B Experimental",
@@ -279,7 +300,14 @@
       "series": 9,
       "latency": "4-vCPU cloud CPU, llama.cpp Q8_0, one at a time",
       "short": "Kev 0.8B",
-      "note": "English-only, like Kev 4B. Apache 2.0."
+      "note": "English-only, like Kev 4B. Apache 2.0.",
+      "in_domain": [
+        "ag_news",
+        "sst5",
+        "banking77",
+        "boolq"
+      ],
+      "in_domain_source": "Its model card lists AG News, SST-5, Banking77 and BoolQ among its training datasets."
     },
     "naluri_308m": {
       "label": "Naluri-308M",
@@ -290,7 +318,16 @@
       "series": 9,
       "latency": "4-vCPU cloud CPU, PyTorch, one at a time",
       "short": "Naluri 308M",
-      "note": "Trained on the train splits of XNLI, MASSIVE and DAIR Emotion; we test their test splits. CC BY-NC 4.0. Run with serve.py from the Naluri repo."
+      "note": "Trained on the train splits of XNLI, MASSIVE and DAIR Emotion; we test their test splits. CC BY-NC 4.0. Run with serve.py from the Naluri repo.",
+      "in_domain": [
+        "xnli_en",
+        "xnli_fr",
+        "xnli_ar",
+        "ar_massive_scenario",
+        "ar_massive_intent",
+        "emotion"
+      ],
+      "in_domain_source": "Its model card lists the train splits of XNLI, MASSIVE and DAIR Emotion."
     },
     "naluri_279m": {
       "label": "Naluri-279M",
@@ -301,7 +338,16 @@
       "series": 9,
       "latency": "4-vCPU cloud CPU, PyTorch, one at a time",
       "short": "Naluri 279M",
-      "note": "Trained on the train splits of XNLI, MASSIVE and DAIR Emotion; we test their test splits. CC BY-NC 4.0. Run with serve.py from the Naluri repo."
+      "note": "Trained on the train splits of XNLI, MASSIVE and DAIR Emotion; we test their test splits. CC BY-NC 4.0. Run with serve.py from the Naluri repo.",
+      "in_domain": [
+        "xnli_en",
+        "xnli_fr",
+        "xnli_ar",
+        "ar_massive_scenario",
+        "ar_massive_intent",
+        "emotion"
+      ],
+      "in_domain_source": "Its model card lists the train splits of XNLI, MASSIVE and DAIR Emotion."
     },
     "d1_3b": {
       "label": "d1-3B",
@@ -479,7 +525,14 @@
       "series": 9,
       "latency": "Cloud A100 80 GB GPU, the maker's vLLM adapter, one call at a time (90 calls)",
       "short": "Dexy 9B",
-      "note": "Independent fine-tune of Qwen3.5-9B, Apache 2.0, run at revision afee4ba through the maker's vLLM /v1/systemone adapter. Two datasets are in-domain: it was fine-tuned on the train splits of typed-decisions and Banking77 (we test their test splits), and on MASSIVE's English and Chinese train splits, the same task as the Arabic MASSIVE datasets. Without typed-decisions and Banking77 it averages 84.5, 0.6 behind Decider V1.2's 85.1. Text only."
+      "note": "Independent fine-tune of Qwen3.5-9B, Apache 2.0, run at revision afee4ba through the maker's vLLM /v1/systemone adapter. Its developer reported its training data before the run: the train splits of typed-decisions and Banking77, and MASSIVE's English and Chinese train splits, so those datasets and the Arabic MASSIVE ones are in-domain. None of our test cases appear in those train splits. Text only.",
+      "in_domain": [
+        "typed-decisions",
+        "banking77",
+        "ar_massive_scenario",
+        "ar_massive_intent"
+      ],
+      "in_domain_source": "Its developer reported fine-tuning on the train splits of typed-decisions and Banking77, and on MASSIVE's English and Chinese train splits."
     }
   },
   "languages": [

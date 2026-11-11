@@ -79,6 +79,14 @@ text_rank = sorted([k for k in charted if index(k) is not None], key=index, reve
 vision_rank = sorted([k for k in charted if vindex(k) is not None], key=vindex, reverse=True)
 
 
+def index_without(k):
+    """The index without the datasets a model is in-domain on, ranked against every ranked model on those same datasets."""
+    ss = [s for s in SUITES if s not in MODELS[k].get("in_domain", [])]
+    mean = lambda x: None if any(val(x, s) is None for s in ss) else 100 * sum(val(x, s) for s in ss) / len(ss)
+    me, vs = mean(k), [mean(x) for x in text_rank]
+    return None if me is None else (me, len(ss), 1 + sum(v is not None and v > me for v in vs), sum(v is not None for v in vs))
+
+
 def rank_in(get, k, pool):
     vs = [get(x) for x in pool if get(x) is not None]
     me = get(k)
@@ -182,6 +190,8 @@ def model_page(k):
     tr = rank_in(index, k, text_rank) if k in charted else None
     vr = rank_in(vindex, k, vision_rank) if k in charted else None
     lat = r.get("latency_ms")
+    in_domain = m.get("in_domain", [])
+    wo = index_without(k) if in_domain else None
     tiles = [
         tile("System One Index", fidx(idx) if idx is not None else '<span class="na">–</span>',
              rank_text(tr) if tr else ("Ran only some datasets" if idx is None else "Kept for reference")),
@@ -189,6 +199,7 @@ def model_page(k):
         tile("Arabic", fidx(index(k, "Arabic")) if index(k, "Arabic") is not None else "–"),
         tile("Vision Index", fidx(vi) if vi is not None else '<span class="na">–</span>',
              rank_text(vr) if vr else ("No image input" if k in NO_IMAGE else "Not run on images")),
+        *([tile("Without in-domain datasets", fidx(wo[0]), f"{ordinal(wo[2])} of {wo[3]} on the same {wo[1]} datasets")] if wo else []),
         tile("Calibration error", fpct(100 * r["all"]["ece"]), "Lower is better"),
         tile("Median latency", fms(lat["p50"]) if lat else "–", "Local, not comparable" if local(k) else f"95th percentile {fms(lat['p95'])}" if lat else ""),
         tile("Cost per 1,000 calls", fusd(per1k(k)) if per1k(k) is not None else ("Local" if local(k) else "–"), m.get("cost_basis", "As billed")),
@@ -200,7 +211,7 @@ def model_page(k):
             continue
         rk = rank_in(lambda x: val(x, s), k, charted) if k in charted else None
         best = max(val(x, s) for x in charted if val(x, s) is not None)
-        rows.append(f'<tr><td>{e(sm["label"])} <small>{e(sm["lang"])}</small></td><td{" class=best" if rk and rk[2] else ""}>{100 * a:.1f}</td>'
+        rows.append(f'<tr><td>{e(sm["label"])} <small>{e(sm["lang"])}{", in-domain" if s in in_domain else ""}</small></td><td{" class=best" if rk and rk[2] else ""}>{100 * a:.1f}</td>'
                     f'<td>{rank_text(rk)}</td><td>{100 * best:.1f}</td><td>{fpct(100 * val(k, s, "ece"))}</td></tr>')
     vrows = []
     for s, sm in VSUITES.items():
@@ -224,7 +235,8 @@ def model_page(k):
     reference = m.get("chart") is False
     description = f"{m['label']} by {m['maker']}" + (f" scores {' and '.join(scores)}" if scores else " ran some of the datasets") + \
         f". Calibration error {fpct(100 * r['all']['ece'])}" + (f", median latency {fms(lat['p50'])}" if lat and not local(k) and not reference else "") + \
-        (". An earlier run, kept for reference." if reference else ".")
+        (". An earlier run, kept for reference." if reference else ".") + \
+        (f" {len(in_domain)} of the datasets it ran are in-domain: it trained on another split of them." if in_domain else "")
     body = f"""<p class="eyebrow">{e(m['maker'])} · {e(m['access'])}</p>
 <h1><span class="dot" style="background:{color(k)}"></span>{e(m['label'])}</h1>
 <p class="lede">{e(description)}</p>
@@ -234,6 +246,7 @@ def model_page(k):
 <h2>This run</h2>
 <dl><dt>Model id</dt><dd><code>{e(m['slug'])}</code></dd><dt>Runs on</dt><dd>{e(m['access'])}</dd><dt>Run date</dt><dd>{e(m['run'])}</dd>
 <dt>Latency</dt><dd>{e(m['latency'])}</dd><dt>Questions</dt><dd>{r['all']['n']:,}, {r['all'].get('failed', 0):,} failed (counted wrong)</dd></dl>
+{f'<p class="note"><b>In-domain:</b> {e(", ".join(SUITES[s]["label"] for s in in_domain))}. {e(m.get("in_domain_source", ""))} We test a different split. The System One Index counts all {len(SUITES)} datasets for every model.</p>' if in_domain else ''}
 {f'<p class="note">{e(m["note"])}</p>' if m.get('note') else ''}
 {f'<h2>Compare</h2><ul class="links">{compare}</ul>' if compare else ''}
 <p class="note">Ranks count the models charted on the <a href="/">leaderboard</a>. Every model gets the same cases and the same request, under the <a href="https://github.com/alilibx/system-one-bench/blob/main/CONTRIBUTING.md">benchmark rules</a>.</p>"""
