@@ -35,7 +35,7 @@
   color-scheme: light;
   --page: #f4f6f9; --surface: #ffffff; --ink: #121a2b; --ink-2: #4a5468; --muted: #6f7889;
   --rule: #dfe3ea; --grid: #e9ecf1; --axis: #c3c9d3; --hover: #eef1f6; --good: rgba(27, 175, 122, 0.08);
-  --accent: #2a78d6; --accent-soft: rgba(42, 120, 214, 0.1); --mark: rgba(237, 161, 0, 0.28);
+  --accent: #2a78d6; --accent-soft: rgba(42, 120, 214, 0.1); --mark: rgba(237, 161, 0, 0.28); --warn: #b45309;
   --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --s5: #e87ba4; --s6: #008300; --s7: #4a3aa7; --s8: #e34948; --s9: #8a93a3; --s10: #0b6e75;
   --display: "Bricolage Grotesque", system-ui, sans-serif;
   --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -45,7 +45,7 @@
     color-scheme: dark;
     --page: #0c121d; --surface: #131b29; --ink: #eef2f8; --ink-2: #b6bfce; --muted: #8b95a7;
     --rule: #263043; --grid: #1d2636; --axis: #3a465c; --hover: #1a2334; --good: rgba(25, 158, 112, 0.12);
-    --accent: #5b9ef0; --accent-soft: rgba(91, 158, 240, 0.14); --mark: rgba(201, 133, 0, 0.35);
+    --accent: #5b9ef0; --accent-soft: rgba(91, 158, 240, 0.14); --mark: rgba(201, 133, 0, 0.35); --warn: #fbbf24;
     --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #008300; --s7: #9085e9; --s8: #e66767; --s9: #6f7889; --s10: #2fb3b5;
   }
 }
@@ -53,7 +53,7 @@
   color-scheme: dark;
   --page: #0c121d; --surface: #131b29; --ink: #eef2f8; --ink-2: #b6bfce; --muted: #8b95a7;
   --rule: #263043; --grid: #1d2636; --axis: #3a465c; --hover: #1a2334; --good: rgba(25, 158, 112, 0.12);
-  --accent: #5b9ef0; --accent-soft: rgba(91, 158, 240, 0.14); --mark: rgba(201, 133, 0, 0.35);
+  --accent: #5b9ef0; --accent-soft: rgba(91, 158, 240, 0.14); --mark: rgba(201, 133, 0, 0.35); --warn: #fbbf24;
   --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #008300; --s7: #9085e9; --s8: #e66767; --s9: #6f7889; --s10: #2fb3b5;
 }
 * { box-sizing: border-box; }
@@ -136,6 +136,8 @@ svg.chart .bar:hover path, svg.chart .pt:hover circle { opacity: 0.85; }
 .multiples { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
 .multiples .card { padding: 16px 16px 12px; }
 .multiples .card h3 { font-size: 16px; }
+.card h3 a { color: inherit; text-decoration: none; }
+.card h3 a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .multiples .card .sub { font-size: 12.5px; margin-bottom: 6px; }
 .group-title { font: 600 15px var(--body); color: var(--ink-2); margin: 26px 0 10px; }
 
@@ -188,6 +190,7 @@ td:last-child, th:last-child { padding-right: 0; }
 .idx span { display: inline-block; width: 56px; height: 6px; border-radius: 3px; background: var(--grid); position: relative; overflow: hidden; }
 .idx span::before { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--w); background: var(--c, var(--accent)); border-radius: 3px; }
 .top1 { font-weight: 700; }
+.tag.flag { color: var(--warn); border-color: currentColor; }
 .tag { display: inline-block; font-size: 11.5px; font-weight: 500; color: var(--muted); border: 1px solid var(--rule); border-radius: 4px; padding: 0 5px; margin-left: 6px; vertical-align: 1px; }
 mark { background: var(--mark); color: inherit; border-radius: 2px; }
 .dim td { color: var(--muted); }
@@ -274,7 +277,7 @@ footer { border-top: 1px solid var(--rule); margin-top: 56px; padding: 22px 0 40
       </svg>
       <span>System One Bench</span>
     </a>
-    <nav aria-label="Sections"><a href="#leaderboard">Leaderboard</a><a href="#index">Text</a><a href="#vision">Vision</a><a href="#datasets" class="opt">Datasets</a><a href="#roadmap" class="opt">Roadmap</a><a href="#method">Method</a><a href="https://github.com/alilibx/system-one-bench" class="opt">GitHub</a></nav>
+    <nav aria-label="Sections"><a href="#leaderboard">Leaderboard</a><a href="#index">Text</a><a href="#vision">Vision</a><a href="#datasets" class="opt">Datasets</a><a href="benchmarks/" class="opt">Benchmarks</a><a href="#roadmap" class="opt">Roadmap</a><a href="#method">Method</a><a href="https://github.com/alilibx/system-one-bench" class="opt">GitHub</a></nav>
     <label class="search">
       <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
       <input id="q" type="search" placeholder="Search models or makers" autocomplete="off" spellcheck="false" aria-label="Search models or makers. Filters every chart and table.">
@@ -357,7 +360,7 @@ footer { border-top: 1px solid var(--rule); margin-top: 56px; padding: 22px 0 40
   <section class="section" id="datasets">
     <p class="eyebrow">Text track</p>
     <h2>By dataset</h2>
-    <p class="note">One chart per dataset. Bars are colored by who makes the model.</p>
+    <p class="note">One chart per dataset. Bars are colored by who makes the model. Click a dataset's name for its full leaderboard, with intervals and ties, or see <a href="benchmarks/">every benchmark's leader</a>.</p>
     <div class="card-head" style="margin-bottom:14px">
       <ul class="legend" id="legend"></ul>
       <div class="tabs" role="group" aria-label="Metric" id="metric-tabs">
@@ -402,6 +405,7 @@ footer { border-top: 1px solid var(--rule); margin-top: 56px; padding: 22px 0 40
           <li>The vision track ran on 15 October from a cloud server, 8 requests in flight per model, and on 25 October, 30 October and 2 November for the models added then (the last two from a different machine, which doesn't change accuracy). It sends each image once, as a base64 PNG or JPEG in <code>state</code>, resized to fit every model's limits. Box answers count as right when they overlap the labelled box by at least half (IoU of 0.5 or more).</li>
           <li>The data is frozen: <a href="https://github.com/alilibx/system-one-bench/blob/main/data.lock.json">data.lock.json</a> holds a SHA-256 for every dataset and image, every source is pinned to a fixed version, and runs are refused on data that doesn't match.</li>
           <li>Nothing was tuned on test data. A model marked <b>in-domain</b> trained on another split of some of the datasets tested here, as its maker disclosed: open a row to see which datasets, and its index without them, ranked against every model on those same datasets. Its index still counts all 16, like every other model's. Models whose training data isn't published may overlap too; we can't tell.</li>
+          <li>A score marked <b>unusually high</b> is far above what that model's other datasets, and every other model's score on that dataset, predict: at least 10 points, and 3.5 times the usual spread once sampling noise is counted. It often means the model trained on that dataset or one like it, disclosed or not. It isn't proof, no flag isn't proof of the opposite, and the score still counts. The <a href="benchmarks/">benchmark pages</a> give the numbers.</li>
         </ul>
       </div>
       <div>
@@ -433,12 +437,17 @@ const $ = id => document.getElementById(id);
 const esc = t => String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const date = s => new Date(s + "T12:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 const ordinal = n => n + (n % 100 >= 11 && n % 100 <= 13 ? "th" : ({ 1: "st", 2: "nd", 3: "rd" })[n % 10] || "th");
-let R, M, V, PAGES = {}, indexSet = "all", metric = "acc";
+let R, M, V, PAGES = {}, BENCH = {}, FLAGS = {}, indexSet = "all", metric = "acc";
 
 // The vision results are optional: without them the page shows the text benchmark alone.
 const vision = fetch("results_vision.json").then(r => r.ok ? r.json() : null).catch(() => null);
 // Per-model pages are generated at deploy time; a local preview without them just leaves the links out.
 fetch("pages.json").then(r => r.ok ? r.json() : {}).then(p => { PAGES = p; if (R) renderBoard(); }).catch(() => {});
+// So are the per-benchmark pages: each dataset chart's title links to its full leaderboard when they exist.
+fetch("benchmarks.json").then(r => r.ok ? r.json() : {}).then(b => { BENCH = b; if (R) draw(); }).catch(() => {});
+// Unusually high scores, found at deploy time: {model: {dataset: expected accuracy}}.
+fetch("flags.json").then(r => r.ok ? r.json() : {}).then(f => { FLAGS = f; if (R) renderBoard(); }).catch(() => {});
+const benchTitle = (s, label) => BENCH[s] ? `<a href="${esc(BENCH[s])}">${esc(label)}</a>` : esc(label);
 Promise.all([fetch("results.json").then(r => r.json()), fetch("meta.json").then(r => r.json()), vision])
   .then(([results, meta, vis]) => { R = results; M = meta; V = vis; render(); })
   .catch(err => {
@@ -474,6 +483,7 @@ function indexWithout(k) {
   const me = mean(k), vs = charted().filter(x => index(x) != null).map(mean).filter(v => v != null);
   return { v: me, n: ss.length, r: me == null ? null : 1 + vs.filter(v => v > me).length, of: vs.length };
 }
+const flagTag = k => FLAGS[k] ? `<span class="tag flag" title="${esc(Object.entries(FLAGS[k]).map(([s, x]) => `${M.suites[s].label}: ${(100 * val(k, s)).toFixed(1)}%, against the ${Math.round(100 * x)}% its other datasets predict`).join("; "))}">unusually high</span>` : "";
 const idTag = k => inDomain(k).length ? `<span class="tag" title="Trained on other splits of ${inDomain(k).length} of the datasets tested here: ${esc(inDomain(k).map(s => M.suites[s].label).join(", "))}">in-domain</span>` : "";
 const per1k = k => R[k].cost && R[k].cost.usd != null ? 1000 * R[k].cost.usd / R[k].cost.calls : null;
 const color = k => `var(--s${M.models[k].series}, var(--muted))`;
@@ -784,7 +794,7 @@ function draw() {
   for (const lang of M.languages) {
     const ss = suites(lang);
     if (!ss.length) continue;
-    html += `<p class="group-title">${lang}</p><div class="multiples">` + ss.map(s => `<div class="card"><h3>${esc(M.suites[s].label)}</h3><p class="sub">${esc(M.suites[s].task)}, n=${R[charted().find(k => val(k, s) != null)]["suite:" + s].n}</p><div data-suite="${s}"></div></div>`).join("") + "</div>";
+    html += `<p class="group-title">${lang}</p><div class="multiples">` + ss.map(s => `<div class="card"><h3>${benchTitle(s, M.suites[s].label)}</h3><p class="sub">${esc(M.suites[s].task)}, n=${R[charted().find(k => val(k, s) != null)]["suite:" + s].n}</p><div data-suite="${s}"></div></div>`).join("") + "</div>";
   }
   $("multiples").innerHTML = html;
   document.querySelectorAll("#multiples [data-suite]").forEach(el => {
@@ -804,7 +814,7 @@ function drawVision() {
   bars($("chart-vision-index"), ks.filter(k => vindex(k) != null).map(k => ({ k, v: vindex(k) })), { fmt: fmtIdx, max: 100, height: 260, labelKey: "label" });
   $("vision-multiples").innerHTML = vsuites().map(s => {
     const n = vval(all.find(k => vval(k, s) != null), s, "n");
-    return `<div class="card"><h3>${esc(M.vision.suites[s].label)}</h3><p class="sub">${esc(M.vision.suites[s].task)}, n=${n}</p><div data-vsuite="${s}"></div></div>`;
+    return `<div class="card"><h3>${benchTitle(s, M.vision.suites[s].label)}</h3><p class="sub">${esc(M.vision.suites[s].task)}, n=${n}</p><div data-vsuite="${s}"></div></div>`;
   }).join("");
   document.querySelectorAll("#vision-multiples [data-vsuite]").forEach(el => {
     const s = el.dataset.vsuite;
@@ -892,7 +902,7 @@ function renderBoard() {
     const bar = (v, k, top) => `<span class="idx${top ? " top1" : ""}">${fmtIdx(v)}<span style="--w:${v.toFixed(1)}%;--c:${color(k)}"></span></span>`;
     return `<tr class="row${x.m.chart === false ? " dim" : ""}" data-k="${esc(x.k)}">
       <td class="rank">${rank ?? ""}</td>
-      <td><div class="model"><button type="button" class="more" aria-expanded="${isOpen}" aria-controls="d-${esc(x.k)}"><i style="background:${color(x.k)}"></i><span><b>${highlight(x.m.label)}${x.m.tag ? `<span class="tag">${esc(x.m.tag)}</span>` : ""}${idTag(x.k)}</b><small>${highlight(x.m.maker)}, ${highlight(x.m.access)}${x.r.all.failed ? `<span class="fail">${x.r.all.failed.toLocaleString("en")} failed, counted wrong</span>` : ""}</small></span></button></div></td>
+      <td><div class="model"><button type="button" class="more" aria-expanded="${isOpen}" aria-controls="d-${esc(x.k)}"><i style="background:${color(x.k)}"></i><span><b>${highlight(x.m.label)}${x.m.tag ? `<span class="tag">${esc(x.m.tag)}</span>` : ""}${idTag(x.k)}${flagTag(x.k)}</b><small>${highlight(x.m.maker)}, ${highlight(x.m.access)}${x.r.all.failed ? `<span class="fail">${x.r.all.failed.toLocaleString("en")} failed, counted wrong</span>` : ""}</small></span></button></div></td>
       ${cell("Index", x.idx != null ? bar(x.idx, x.k, x.k === topText) : dash)}
       ${cell("English", index(x.k, "English") != null ? fmtIdx(index(x.k, "English")) : dash)}
       ${cell("Arabic", index(x.k, "Arabic") != null ? fmtIdx(index(x.k, "Arabic")) : dash)}
@@ -924,7 +934,7 @@ function detail(x) {
   const rankIn = (get, k) => { const vs = cmpSet.map(get).filter(v => v != null); const me = get(k); return { r: 1 + vs.filter(v => v > me).length, n: vs.length, best: me === Math.max(...vs) }; };
   const li = (label, v, rk) => `<li class="${rk.best ? "best" : ""}"><span>${esc(label)}</span><span><b>${(100 * v).toFixed(1)}</b><em>${ordinal(rk.r)}/${rk.n}</em></span></li>`;
   const text = Object.keys(M.suites).filter(s => val(x.k, s) != null)
-    .map(s => li(M.suites[s].label + (M.suites[s].lang !== "English" && !M.suites[s].label.includes(M.suites[s].lang) ? ` (${M.suites[s].lang})` : "") + (inDomain(x.k).includes(s) ? ", in-domain" : ""), val(x.k, s), rankIn(k => val(k, s), x.k))).join("");
+    .map(s => li(M.suites[s].label + (M.suites[s].lang !== "English" && !M.suites[s].label.includes(M.suites[s].lang) ? ` (${M.suites[s].lang})` : "") + (inDomain(x.k).includes(s) ? ", in-domain" : "") + (FLAGS[x.k]?.[s] != null ? ", unusually high" : ""), val(x.k, s), rankIn(k => val(k, s), x.k))).join("");
   const wo = inDomain(x.k).length ? indexWithout(x.k) : null;
   const vis = V?.[x.k] ? vsuites().filter(s => vval(x.k, s) != null)
     .map(s => li(M.vision.suites[s].label, vval(x.k, s), rankIn(k => vruns().includes(k) ? vval(k, s) : null, x.k))).join("") : "";

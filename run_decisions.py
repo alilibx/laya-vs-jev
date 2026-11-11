@@ -7,6 +7,7 @@ at any other one, such as a local server.
 Usage: OPENROUTER_API_KEY=... python run_decisions.py --model openai/gpt-6-luna-decisions --name luna
        OPENROUTER_API_KEY=kerstel://global/OPENROUTER_API_KEY ks run -- python run_decisions.py --model typesafe/jev-1.13 --name or_jev
        CELERIS_API_KEY=kerstel://global/CELERIS_API_KEY ks run -- python run_decisions.py --provider celeris --name celeris
+       GEMINI_API_KEY=kerstel://global/GEMINI_API_KEY ks run -- python run_decisions.py --provider google --name gemini_decision1
        python run_decisions.py --url http://localhost:8000/v1/systemone --key-env "" --model kev-9b --name kev_9b
 Writes preds_<name>.jsonl and, once, latency_<name>.jsonl (one request in flight at a time).
 
@@ -37,6 +38,9 @@ PROVIDERS = {
     "celeris": ("https://inference.celeris.ai/celeris-1-decision/v1/systemone", "celeris-1-decision", "CELERIS_API_KEY", "bearer", 0.04),
     "hanzo": ("https://api.hanzo.ai/v1/decisions", "kai", "HANZO_API_KEY", "bearer", 0.021),
     "meragpt": ("https://meragpt.com/v1/systemone", "decider-1", "MERAGPT_API_KEY", "bearer", 0.04),
+    # Google's Decisions API takes a different body; to_google translates it, see there.
+    "google": ("https://generativelanguage.googleapis.com/v1beta/decisions", "gemini-decision-1", "GEMINI_API_KEY",
+               "x-goog-api-key", 0.10),
 }
 
 
@@ -74,8 +78,36 @@ def with_images(x):
     return x
 
 
-async def call(client, url, model, case, per_m=None):
+def to_google(body):
+    """The same request in Google's Decisions API shape, with no content changed. The state goes in as `input`: an
+    object as its JSON text (the same serialization the System One body carries), a list of images as image blocks.
+    Noul criteria {true, false} are renamed {true_description, false_description}. Answers come back in the System One
+    shape; usage reports total_input_tokens."""
+    def block(x):
+        if isinstance(x, dict) and x.get("type") == "image_url":
+            head, data = x["image_url"]["url"].split(",", 1)
+            return {"type": "image", "data": data, "mime_type": head[len("data:"):].split(";")[0]}
+        return {"type": "text", "text": x if isinstance(x, str) else json.dumps(x, ensure_ascii=False)}
+    state = body["state"]
+    inp = [block(x) for x in state] if isinstance(state, list) else json.dumps(state, ensure_ascii=False)
+    qs = {}
+    for k, q in body["questions"].items():
+        q = dict(q)
+        if q["type"] == "noul" and "criteria" in q:
+            q["criteria"] = {"true_description": q["criteria"]["true"], "false_description": q["criteria"]["false"]}
+        qs[k] = q
+    return {"model": body["model"], "input": inp, "questions": qs}
+
+
+def from_google_usage(u):
+    return u and {"input_tokens": u.get("total_input_tokens"), "output_tokens": u.get("total_output_tokens"),
+                  "by_modality": u.get("input_tokens_by_modality")}
+
+
+async def call(client, url, model, case, per_m=None, google=False):
     body = {"model": model, "state": with_images(case["state"]), "questions": with_images(case["questions"])}
+    if google:
+        body = to_google(body)
     for attempt in range(8):
         t0 = time.perf_counter()
         try:
@@ -86,6 +118,8 @@ async def call(client, url, model, case, per_m=None):
             ms = (time.perf_counter() - t0) * 1000
             if r.status_code == 200:
                 d = r.json()
+                if google:
+                    d = {**d, "usage": from_google_usage(d.get("usage")), "model": d.get("model", model), "provider": "Google"}
                 return {"id": case["id"], "answers": d["answers"], "usage": priced(d.get("usage"), per_m), "model": d.get("model"),
                         "provider": d.get("provider"), "ms": ms}
             if r.status_code not in (408, 429, 500, 502, 503, 504, 529):
@@ -101,7 +135,7 @@ async def main():
     ap.add_argument("--provider", choices=PROVIDERS, help="call a vendor's own endpoint instead of OpenRouter")
     ap.add_argument("--url", help="any endpoint that takes the System One request body, e.g. a local server")
     ap.add_argument("--key-env", help="env var holding the API key; empty for none (default OPENROUTER_API_KEY)")
-    ap.add_argument("--auth", choices=["bearer", "x-api-key"], help="how the key is sent (default bearer)")
+    ap.add_argument("--auth", choices=["bearer", "x-api-key", "x-goog-api-key"], help="how the key is sent (default bearer)")
     ap.add_argument("--name", required=True, help="short name for the output files")
     ap.add_argument("--cases", default="cases.jsonl", help="cases file, e.g. image_cases.jsonl")
     ap.add_argument("--suites", help="comma-separated suites to run (default: every suite in the cases file)")
@@ -136,16 +170,18 @@ async def main():
     headers = {}
     if key_env:
         k = os.environ[key_env].strip()
-        headers = {"X-API-Key": k} if auth == "x-api-key" else {"Authorization": f"Bearer {k}"}
+        headers = ({"X-API-Key": k} if auth == "x-api-key" else {"x-goog-api-key": k} if auth == "x-goog-api-key"
+                   else {"Authorization": f"Bearer {k}"})
+    google = a.provider == "google"
     async with httpx.AsyncClient(headers=headers, timeout=60) as client:
         # Latency probe: one request in flight at a time, like a single interactive caller.
         if a.sequential_latency and not os.path.exists(lat_path) and any(c["suite"] == "ag_news" for c in cases):
             probe = [c for c in cases if c["suite"] == "ag_news"][: a.sequential_latency]
             probe += [c for c in cases if c["suite"] == "typed-decisions"][: a.sequential_latency // 2]
-            await call(client, url, model, probe[0], per_m)  # warm the connection
+            await call(client, url, model, probe[0], per_m, google)  # warm the connection
             with open(lat_path, "w") as f:
                 for c in probe:
-                    r = await call(client, url, model, c, per_m)
+                    r = await call(client, url, model, c, per_m, google)
                     f.write(json.dumps({"id": c["id"], "suite": c["suite"], "nq": len(c["questions"]), "ms": r.get("ms"),
                                         "error": r.get("error")}) + "\n")
                     f.flush()
@@ -155,7 +191,7 @@ async def main():
 
         async def one(c):
             async with sem:
-                return await call(client, url, model, c, per_m)
+                return await call(client, url, model, c, per_m, google)
 
         with open(out, "a") as f:
             for fut in asyncio.as_completed([one(c) for c in todo]):
