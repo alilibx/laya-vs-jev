@@ -73,6 +73,7 @@ Models covered so far:
 | GLiDE (`fastino/GLiDE`) | Fastino | Fastino API | 2026-11-02, text and vision |
 | Celeris-1 Decision (`celeris-1-decision`) | Celeris | Celeris API | 2026-11-08 |
 | Decider 1 (`decider-1`) | meraGPT | meraGPT API; rejects questions with more than 10 options | 2026-11-08 |
+| Gemini Decision 1 (`gemini-decision-1`) | Google | Gemini API (Decisions API), translated request body | 2026-11-11, text and vision |
 | [Laya](https://huggingface.co/convaiinnovations/laya) and its Arabic fine-tunes | Convai Innovations, Wouze | open weights, locally on Apple MPS | 2026-09-23, 2026-09-25 |
 | d1-3B and d1-omni-600M (`LiquidAI/d1-3B`, `LiquidAI/d1-omni-600M`) | Liquid AI | open weights, llama.cpp on a 4-vCPU CPU | 2026-10-17, 2026-10-18 |
 | d3 edge, lite and nano (`vllm-sr/d3-{edge,lite,nano}`) | vLLM Semantic Router | open weights, llama.cpp on a 4-vCPU CPU | 2026-10-17, 2026-10-18 |
@@ -114,7 +115,8 @@ OPENROUTER_API_KEY=<your key> .venv/bin/python run_decisions.py --model typesafe
 - [Licence and citation](#licence-and-citation) · [Results site](#results-site) · [Roadmap](#roadmap) · [Live race](#live-race)
 - [Frozen data](#frozen-data) · [Full benchmark](#full-benchmark) · [Vision track](#vision-track) ·
   [Open-weight models, run locally](#open-weight-models-run-locally)
-- Rounds: [12, Dexy-Decision-9B and in-domain tags](#round-12-dexy-decision-9b-on-a-gpu-and-in-domain-tags-2026-11-11) ·
+- Rounds: [13, Gemini Decision 1 on Google's API](#round-13-gemini-decision-1-on-googles-api-2026-11-11) ·
+  [12, Dexy-Decision-9B and in-domain tags](#round-12-dexy-decision-9b-on-a-gpu-and-in-domain-tags-2026-11-11) ·
   [11, Celeris-1 and Decider 1 on their own APIs](#round-11-celeris-1-decision-and-meragpt-decider-1-on-their-own-apis-2026-11-08) ·
   [10, Fastino GLiDE on its own API](#round-10-fastino-glide-on-its-own-api-2026-11-02) ·
   [9, four more from OpenRouter](#round-9-four-more-models-from-openrouter-2026-10-30) ·
@@ -164,6 +166,17 @@ dates, dataset descriptions, and the vision track's datasets). Its layout follow
   filter is kept in the URL (`?q=clef`, `?maker=Perplexity`) so a filtered view can be shared.
 - **Leaderboard.** One table with both indexes side by side, sortable by any column. Clicking a model shows its run
   details and every dataset score with its rank.
+- **A page per benchmark, and every benchmark's leader.** `/benchmarks/` lists the leader of every dataset and index,
+  and `/benchmarks/<dataset>/` ranks every model on that dataset with a 95% interval, macro-F1, calibration, failures,
+  in-domain tags, the dataset's source, and two baselines (the best constant answer and a random guess). A model is called
+  the leader only when its lead is larger than sampling noise (1.96 standard errors of the difference, treating two runs
+  as independent, which errs towards a tie); otherwise the page names who it's tied with. Each dataset also gets a badge,
+  `badge/bench-<dataset>.json`. Sources and baselines live with each dataset in `site/meta.json`.
+- **Unusually high scores.** At deploy time, `build_pages.py` predicts every text score from the model's other datasets
+  and every other model's score on that dataset (a two-way median-polish fit in log-odds, which the outliers can't pull
+  towards themselves). A score at least 10 points and 3.5 spreads above its prediction is marked **unusually high** on
+  the leaderboard, the benchmark page and the model page, and listed in `flags.json`. It often means a model trained on
+  that dataset or one like it, disclosed or not; it isn't proof, and the score still counts.
 - **A page per model, and per pair.** `.github/scripts/build_pages.py` runs at deploy time and writes
   `/models/<model>/` (every score, with its rank and the best on the board) and `/compare/<a>-vs-<b>/` for every pair of
   ranked models, plus `sitemap.xml`. They're built from the results, so they never need editing by hand.
@@ -283,15 +296,18 @@ Latency on the site comes from a separate re-run of every API model from one mac
 .venv/bin/python set_latency.py lat/preds_*.jsonl   # re-runs written by run_decisions.py run inside lat/
 ```
 
-Round 9's models (d1.1, Mammoth 1, Elephant 1, Joey 1), GLiDE, Celeris-1 Decision and Decider 1 have no latency on the
-board, since they ran from machines whose round trips don't compare (see
-[round 9](#round-9-four-more-models-from-openrouter-2026-10-30), [round 10](#round-10-fastino-glide-on-its-own-api-2026-11-02)
-and [round 11](#round-11-celeris-1-decision-and-meragpt-decider-1-on-their-own-apis-2026-11-08)). After a full re-score, set their `latency_ms` back to
+Round 9's models (d1.1, Mammoth 1, Elephant 1, Joey 1), GLiDE, Celeris-1 Decision, Decider 1 and Gemini Decision 1
+have no latency on the board, since they ran from machines whose round trips don't compare (see
+[round 9](#round-9-four-more-models-from-openrouter-2026-10-30), [round 10](#round-10-fastino-glide-on-its-own-api-2026-11-02),
+[round 11](#round-11-celeris-1-decision-and-meragpt-decider-1-on-their-own-apis-2026-11-08)
+and [round 13](#round-13-gemini-decision-1-on-googles-api-2026-11-11)). After a full re-score, set their `latency_ms` back to
 `null`.
 
 Models on their vendor's own API take the same request body. `--provider fastino|celeris|hanzo|meragpt` sets the
 endpoint, model id and auth header, and reads the key from `FASTINO_API_KEY`, `CELERIS_API_KEY`, `HANZO_API_KEY` or
-`MERAGPT_API_KEY`. `--url` points the runner at any other endpoint that takes this body, such as a local server
+`MERAGPT_API_KEY`. `--provider google` calls Google's Decisions API with `GEMINI_API_KEY`; its body has a different
+shape, so `to_google` in `run_decisions.py` translates the same request into it without changing any content (see
+[round 13](#round-13-gemini-decision-1-on-googles-api-2026-11-11)). `--url` points the runner at any other endpoint that takes this body, such as a local server
 (`--key-env ""` when it needs no key):
 
 ```bash
@@ -384,6 +400,35 @@ The other open models need their own runners:
 A 24 GB Mac fits everything up to 9B at Q8. The 27B models (Kev 27B, d3 27B, Open-Jev 27B) and Open-Jev 9B, whose base
 model alone is 19 GB, need a bigger machine. Laya Multilingual is already covered: Laya Router sends every non-English
 state, Arabic and French included, to those same weights.
+
+## Round 13: Gemini Decision 1 on Google's API (2026-11-11)
+
+Google released Gemini Decision 1 (`gemini-decision-1`) on 11 November, on a new Decisions API in the Gemini API. It
+isn't on OpenRouter yet, so it ran the same day on Google's own endpoint (`run_decisions.py --provider google`) on the
+3,250 text cases and the 5 Vision Index datasets, 8 calls in flight, with a paid-tier key so that Google doesn't train
+on the requests.
+
+| Model | Maker | Index | English | Arabic | Vision Index | Calibration error | Cost per 1,000 calls |
+|---|---|---|---|---|---|---|---|
+| Gemini Decision 1 | Google | 81.6 (14th of 39) | 79.2 (16th) | 84.5 (5th of 41) | **89.2 (1st of 14)** | 3.6% (16th of 41) | $0.036 |
+
+- **The top Vision Index, by 3.1 points.** It's 1st on Oxford-IIIT Pet (98.0%, 5.5 points ahead, a clear lead) and on
+  Arabic sentiment from an image (75.0%, 5 points ahead but within sampling noise), and loses little reading text from pixels: 94.5% on SST-2 as an image against 96.5% as text.
+  Its weakest image dataset is VQAv2 yes/no (86.0%, 13th of 14).
+- **Mid-table on text.** It's strong in Arabic (2nd on OSACT4 offensive and Arabic tweet sentiment, 3rd on both MIRACL
+  datasets) and on SST-2 (4th), but 28th on Banking77 (79.5%) and 23rd on AG News (88.5%).
+- **A translated request.** Google's API takes `input` and a `questions` map, not `state` and `questions`. `to_google`
+  sends the state as its JSON text in `input` (images as Google's image blocks), renames noul criteria `true` and
+  `false` to `true_description` and `false_description`, and sends every other field unchanged; answers come back in the
+  usual shape. No content changes, but it isn't the byte-identical body the other API models get, which is why the
+  model's note says so.
+- **4 failed calls, all safety blocks.** Google's filter refused 4 text cases as "sensitive words" (2 OSACT4 offensive,
+  1 SST-5, 1 DAIR Emotion); they count as wrong. 26 calls hit rate limits (429) and succeeded on one re-run.
+- **Cost is at list price**, $0.10 per 1M input tokens, since the API reports tokens but no cost: $0.117 for the text
+  run (1.17M tokens) and $0.130 for the image run.
+- **No latency on the board.** It ran from a different machine than the board's 15 October timings. The
+  one-call-at-a-time probe measured 163 ms median there, for reference only.
+- **No Box questions**, so no RefCOCO score.
 
 ## Round 12: Dexy-Decision-9B on a GPU, and in-domain tags (2026-11-11)
 

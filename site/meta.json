@@ -1,4 +1,25 @@
 {
+  "logos_note": "Maker logos in site/logos: the large AI labs from LobeHub Icons (@lobehub/icons-static-svg 1.40.0, MIT), the rest from each maker's own site icon. Makers without a logo get a monogram.",
+  "logos": {
+    "Google": "logos/google.svg",
+    "OpenAI": "logos/openai.svg",
+    "Perplexity": "logos/perplexity.svg",
+    "Cloudflare": "logos/cloudflare.svg",
+    "Microsoft": "logos/microsoft.svg",
+    "Upstage": "logos/upstage.svg",
+    "Together AI": "logos/together.svg",
+    "vLLM Semantic Router": "logos/vllm.svg",
+    "Nace AI": "logos/nace.svg",
+    "meraGPT": "logos/meragpt.svg",
+    "Liquid AI": "logos/liquid.png",
+    "Inception": "logos/inception.png",
+    "Baseten": "logos/baseten.png",
+    "Fastino": "logos/fastino.png",
+    "Celeris": "logos/celeris.png",
+    "Respan": "logos/respan.png",
+    "ScaleDown": "logos/scaledown.png",
+    "TypeSafe": "logos/typesafe.png"
+  },
   "series": {
     "1": "TypeSafe",
     "2": "OpenAI",
@@ -533,6 +554,18 @@
         "ar_massive_intent"
       ],
       "in_domain_source": "Its developer reported fine-tuning on the train splits of typed-decisions and Banking77, and on MASSIVE's English and Chinese train splits."
+    },
+    "gemini_decision1": {
+      "label": "Gemini Decision 1",
+      "maker": "Google",
+      "access": "Gemini API",
+      "slug": "gemini-decision-1",
+      "run": "2026-11-11",
+      "series": 9,
+      "short": "Gemini D1",
+      "cost_basis": "At list price",
+      "latency": "API; not timed (round 13 ran on Google's own API from a machine whose round trips don't compare with the board's)",
+      "note": "Closed weights, on Google's Decisions API, which takes a different request body: run_decisions.py --provider google sends the same state and questions, with the state as JSON text in `input`, noul criteria renamed true_description and false_description, and images as image blocks. Google's safety filter refused 4 text cases (2 OSACT4 offensive, 1 SST-5, 1 DAIR Emotion), which count as wrong. Cost is input tokens at the $0.10 per 1M list price, since the API reports no cost. Ran on a paid-tier key, so Google doesn't train on the requests. Doesn't answer Box questions."
     }
   },
   "languages": [
@@ -544,82 +577,163 @@
     "ag_news": {
       "label": "AG News",
       "task": "News topic, 4 options",
-      "lang": "English"
+      "lang": "English",
+      "source": "fancyzhx/ag_news",
+      "split": "test",
+      "sample": "200 random articles",
+      "constant": 0.265,
+      "chance": 0.25
     },
     "sst2": {
       "label": "SST-2",
       "task": "Movie review sentiment, yes/no",
-      "lang": "English"
+      "lang": "English",
+      "source": "stanfordnlp/sst2",
+      "split": "validation",
+      "sample": "200 random reviews",
+      "constant": 0.5,
+      "chance": 0.5
     },
     "sst5": {
       "label": "SST-5",
       "task": "Sentiment on a 5-level score",
-      "lang": "English"
+      "lang": "English",
+      "source": "SetFit/sst5",
+      "split": "test",
+      "sample": "200 random reviews",
+      "constant": 0.31,
+      "chance": 0.2
     },
     "emotion": {
       "label": "DAIR Emotion",
       "task": "Emotion, 6 options",
-      "lang": "English"
+      "lang": "English",
+      "source": "dair-ai/emotion",
+      "split": "test",
+      "sample": "200 random texts",
+      "constant": 0.3,
+      "chance": 0.1667
     },
     "banking77": {
       "label": "Banking77",
       "task": "Banking intent, 77 options",
-      "lang": "English"
+      "lang": "English",
+      "source": "mteb/banking77",
+      "split": "test",
+      "sample": "200 random messages, all 77 intents as options",
+      "constant": 0.035,
+      "chance": 0.013
     },
     "boolq": {
       "label": "BoolQ",
       "task": "Reading comprehension, yes/no",
-      "lang": "English"
+      "lang": "English",
+      "source": "google/boolq",
+      "split": "validation",
+      "sample": "200 random passage and question pairs",
+      "constant": 0.62,
+      "chance": 0.5
     },
     "xnli_en": {
       "label": "XNLI English",
       "task": "Does one sentence follow from another, 3 options",
-      "lang": "English"
+      "lang": "English",
+      "source": "facebook/xnli",
+      "split": "test",
+      "sample": "150 random pairs, the same items as XNLI French and Arabic",
+      "constant": 0.4,
+      "chance": 0.3333
     },
     "typed-decisions": {
       "label": "Typed decisions",
       "task": "Agent and product states, 5 questions per case",
-      "lang": "English"
+      "lang": "English",
+      "source": "LocalLLaMA/typed-decisions",
+      "split": "test",
+      "sample": "The whole test split: 400 cases, 5 questions each, with soft labels",
+      "constant": 0.4615,
+      "chance": 0.3175,
+      "cases": 400
     },
     "xnli_fr": {
       "label": "XNLI French",
       "task": "Does one sentence follow from another, 3 options",
-      "lang": "French"
+      "lang": "French",
+      "source": "facebook/xnli",
+      "split": "test",
+      "sample": "150 random pairs, the same items as XNLI English and Arabic",
+      "constant": 0.4,
+      "chance": 0.3333
     },
     "xnli_ar": {
       "label": "XNLI Arabic",
       "task": "Does one sentence follow from another, 3 options",
-      "lang": "Arabic"
+      "lang": "Arabic",
+      "source": "facebook/xnli",
+      "split": "test",
+      "sample": "150 random pairs, the same items as XNLI English and French",
+      "constant": 0.4,
+      "chance": 0.3333
     },
     "ar_massive_scenario": {
       "label": "MASSIVE scenario",
       "task": "Assistant request scenario, 18 options",
-      "lang": "Arabic"
+      "lang": "Arabic",
+      "source": "SetFit/amazon_massive_scenario_ar-SA",
+      "split": "test",
+      "sample": "200 random requests, all 18 scenarios as options",
+      "constant": 0.175,
+      "chance": 0.0556
     },
     "ar_massive_intent": {
       "label": "MASSIVE intent",
       "task": "Assistant request intent, 20 options",
-      "lang": "Arabic"
+      "lang": "Arabic",
+      "source": "SetFit/amazon_massive_intent_ar-SA",
+      "split": "test",
+      "sample": "200 random requests, the right intent and 19 random others as options",
+      "constant": 0.11,
+      "chance": 0.05
     },
     "ar_offensive": {
       "label": "OSACT4 offensive",
       "task": "Offensive tweet, yes/no",
-      "lang": "Arabic"
+      "lang": "Arabic",
+      "source": "arbml/OSACT4_hatespeech",
+      "split": "validation",
+      "sample": "200 random tweets",
+      "constant": 0.8,
+      "chance": 0.5
     },
     "ar_sentiment": {
       "label": "Tweet sentiment",
       "task": "Sentiment, 3 options",
-      "lang": "Arabic"
+      "lang": "Arabic",
+      "source": "mteb/tweet_sentiment_multilingual",
+      "split": "test",
+      "sample": "200 random Arabic tweets",
+      "constant": 0.365,
+      "chance": 0.3333
     },
     "ar_miracl_rerank": {
       "label": "MIRACL rerank",
       "task": "Pick the relevant passage out of 8",
-      "lang": "Arabic"
+      "lang": "Arabic",
+      "source": "mteb/MIRACLReranking",
+      "split": "dev",
+      "sample": "200 Arabic queries, 1 relevant passage and 7 not, shuffled",
+      "constant": 0.155,
+      "chance": 0.125
     },
     "ar_miracl_pair": {
       "label": "MIRACL pairwise",
       "task": "Is this passage relevant, yes/no",
-      "lang": "Arabic"
+      "lang": "Arabic",
+      "source": "mteb/MIRACLReranking",
+      "split": "dev",
+      "sample": "200 other Arabic queries, half with a relevant passage",
+      "constant": 0.5,
+      "chance": 0.5
     }
   },
   "roadmap": [
@@ -725,31 +839,59 @@
         "label": "SST-2, as an image",
         "task": "The 200 SST-2 reviews rendered as a picture, yes/no",
         "text": "sst2",
-        "short": "SST-2"
+        "short": "SST-2",
+        "source": "stanfordnlp/sst2",
+        "split": "validation",
+        "sample": "The 200 SST-2 reviews from the text track, rendered in Noto Sans",
+        "constant": 0.5,
+        "chance": 0.5
       },
       "img_ar_sentiment": {
         "label": "Arabic sentiment, as an image",
         "task": "The 200 Arabic tweets rendered as a picture, 3 options",
         "text": "ar_sentiment",
-        "short": "Arabic sentiment"
+        "short": "Arabic sentiment",
+        "source": "mteb/tweet_sentiment_multilingual",
+        "split": "test",
+        "sample": "The 200 Arabic tweets from the text track, rendered in Noto Naskh Arabic",
+        "constant": 0.365,
+        "chance": 0.3333
       },
       "img_pets": {
         "label": "Oxford-IIIT Pet",
-        "task": "Cat or dog breed from a photo, 37 options"
+        "task": "Cat or dog breed from a photo, 37 options",
+        "source": "timm/oxford-iiit-pet",
+        "split": "test",
+        "sample": "200 random photos, all 37 breeds as options",
+        "constant": 0.055,
+        "chance": 0.027
       },
       "img_vqa_yesno": {
         "label": "VQAv2 yes/no",
-        "task": "A yes/no question about a photo"
+        "task": "A yes/no question about a photo",
+        "source": "lmms-lab-encoder/VQAv2",
+        "split": "validation",
+        "sample": "200 photos from the first shard, one yes/no question each",
+        "constant": 0.52,
+        "chance": 0.5
       },
       "img_count": {
         "label": "CountBench",
-        "task": "How many objects, 2 to 10, as a 9-level score"
+        "task": "How many objects, 2 to 10, as a 9-level score",
+        "source": "vikhyatk/CountBenchQA",
+        "split": "test",
+        "sample": "200 photos, counts from 2 to 10",
+        "constant": 0.13,
+        "chance": 0.1111
       }
     },
     "box": {
       "img_refcoco": {
         "label": "RefCOCO",
-        "task": "Box the person or object a phrase describes, 100 people and 100 objects"
+        "task": "Box the person or object a phrase describes, 100 people and 100 objects",
+        "source": "lmms-lab-encoder/RefCOCO",
+        "split": "testA and testB",
+        "sample": "100 people (testA) and 100 objects (testB), one phrase per image"
       }
     },
     "no_image": [

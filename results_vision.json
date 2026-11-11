@@ -1746,5 +1746,126 @@
   },
   "data_sha256": "9fcf4def08b3c6b1f2a043897d65c6721f4d146c2b3eff18214a1f7fa6ad992e",
   "latency_ms": null
+ },
+ "gemini_decision1": {
+  "suite:img_ar_sentiment": {
+   "n": 200,
+   "failed": 0,
+   "acc": 0.75,
+   "macro_f1": 0.7459,
+   "nll": 0.5571,
+   "brier": 0.3344,
+   "ece": 0.0655,
+   "p_true_zero": 0.0,
+   "conf_auroc": 0.7936,
+   "acc_at_50cov": 0.91
+  },
+  "suite:img_count": {
+   "n": 200,
+   "failed": 0,
+   "acc": 0.925,
+   "macro_f1": 0.9232,
+   "nll": 0.3156,
+   "brier": 0.1426,
+   "ece": 0.094,
+   "p_true_zero": 0.0,
+   "conf_auroc": 0.8519,
+   "acc_at_50cov": 0.99,
+   "score_mae": 0.219
+  },
+  "suite:img_pets": {
+   "n": 200,
+   "failed": 0,
+   "acc": 0.98,
+   "macro_f1": 0.9755,
+   "nll": 0.0858,
+   "brier": 0.0355,
+   "ece": 0.0303,
+   "p_true_zero": 0.0,
+   "conf_auroc": 0.9732,
+   "acc_at_50cov": 1.0
+  },
+  "suite:img_sst2": {
+   "n": 200,
+   "failed": 0,
+   "acc": 0.945,
+   "macro_f1": 0.945,
+   "nll": 0.2638,
+   "brier": 0.1284,
+   "ece": 0.1417,
+   "p_true_zero": 0.0,
+   "conf_auroc": 0.8826,
+   "acc_at_50cov": 1.0
+  },
+  "suite:img_vqa_yesno": {
+   "n": 200,
+   "failed": 0,
+   "acc": 0.86,
+   "macro_f1": 0.8598,
+   "nll": 0.3615,
+   "brier": 0.2077,
+   "ece": 0.1208,
+   "p_true_zero": 0.0,
+   "conf_auroc": 0.8582,
+   "acc_at_50cov": 0.97
+  },
+  "type:choice": {
+   "n": 400,
+   "failed": 0,
+   "acc": 0.865,
+   "macro_f1": 0.958,
+   "nll": 0.3215,
+   "brier": 0.1849,
+   "ece": 0.0385,
+   "p_true_zero": 0.0,
+   "conf_auroc": 0.8966,
+   "acc_at_50cov": 1.0
+  },
+  "type:noul": {
+   "n": 400,
+   "failed": 0,
+   "acc": 0.9025,
+   "macro_f1": 0.9024,
+   "nll": 0.3127,
+   "brier": 0.168,
+   "ece": 0.1255,
+   "p_true_zero": 0.0,
+   "conf_auroc": 0.8733,
+   "acc_at_50cov": 0.99
+  },
+  "type:score": {
+   "n": 200,
+   "failed": 0,
+   "acc": 0.925,
+   "macro_f1": 0.9232,
+   "nll": 0.3156,
+   "brier": 0.1426,
+   "ece": 0.094,
+   "p_true_zero": 0.0,
+   "conf_auroc": 0.8519,
+   "acc_at_50cov": 0.99,
+   "score_mae": 0.219
+  },
+  "all": {
+   "n": 1000,
+   "failed": 0,
+   "acc": 0.892,
+   "macro_f1": 0.9565,
+   "nll": 0.3168,
+   "brier": 0.1697,
+   "ece": 0.0741,
+   "p_true_zero": 0.0,
+   "conf_auroc": 0.8699,
+   "acc_at_50cov": 0.988,
+   "score_mae": 0.219
+  },
+  "cost": {
+   "usd": 0.1298,
+   "input_tokens": 1298487,
+   "output_tokens": 0,
+   "calls": 1000
+  },
+  "data_sha256": "9fcf4def08b3c6b1f2a043897d65c6721f4d146c2b3eff18214a1f7fa6ad992e",
+  "latency_ms": null
  }
 }
