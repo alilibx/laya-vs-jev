@@ -149,49 +149,79 @@ flag_text = lambda k, s: (f"{100 * val(k, s):.1f}%, {100 * (val(k, s) - FLAGS[(k
 
 
 CSS = """
-:root { color-scheme: light; --page: #f4f6f9; --surface: #fff; --ink: #121a2b; --ink-2: #4a5468; --muted: #6f7889;
-  --rule: #dfe3ea; --accent: #2a78d6; --good: #1baf7a;
-  --display: "Bricolage Grotesque", system-ui, sans-serif; --body: "IBM Plex Sans", system-ui, -apple-system, sans-serif; }
-@media (prefers-color-scheme: dark) { :root { color-scheme: dark; --page: #0c121d; --surface: #131b29; --ink: #eef2f8;
-  --ink-2: #b6bfce; --muted: #8b95a7; --rule: #263043; --accent: #5b9ef0; --good: #199e70; } }
+:root { color-scheme: light; --page: #f5f6f8; --surface: #fff; --side: #eceef2; --chrome: #e6e9ee; --ink: #161b24; --ink-2: #4b5462;
+  --muted: #737d8c; --rule: #dcdfe5; --accent: #2a78d6; --good: #1baf7a; --comment: #3f8f5e; --num: #b35c00; --status: #2a78d6;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace; --display: var(--mono);
+  --body: "IBM Plex Sans", system-ui, -apple-system, sans-serif; }
+@media (prefers-color-scheme: dark) { :root { color-scheme: dark; --page: #0b0e13; --surface: #10141b; --side: #0d1117; --chrome: #090c10;
+  --ink: #e5eaf1; --ink-2: #a9b3c1; --muted: #6f7a89; --rule: #1f2631; --accent: #5ea6ff; --good: #2bc48a; --comment: #6a9e7a;
+  --num: #f0a35e; --status: #1b5fae; } }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--page); color: var(--ink); font: 16px/1.55 var(--body); -webkit-font-smoothing: antialiased; }
+body { margin: 0; background: var(--page); color: var(--ink); font: 15.5px/1.6 var(--body); -webkit-font-smoothing: antialiased; }
 a { color: inherit; text-underline-offset: 3px; }
-.wrap { max-width: 980px; margin: 0 auto; padding: 0 16px 56px; }
-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--rule); }
-.mark { display: flex; align-items: center; gap: 10px; font: 800 19px/1 var(--display); text-decoration: none; }
-header nav a { color: var(--ink-2); font-size: 14.5px; }
-.eyebrow { font: 600 12.5px var(--body); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin: 40px 0 8px; }
-h1 { font: 700 clamp(30px, 5vw, 46px)/1.08 var(--display); letter-spacing: -.02em; margin: 0 0 10px; }
-h2 { font: 700 22px var(--display); margin: 40px 0 12px; }
-.lede { color: var(--ink-2); max-width: 70ch; margin: 0; }
-.dot { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 8px; vertical-align: 1px; }
-.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; margin-top: 24px; }
-.tile { background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; padding: 14px 16px; }
-.tile .k { font-size: 12.5px; color: var(--muted); }
-.tile .v { font: 700 28px/1.2 var(--display); margin-top: 4px; font-variant-numeric: tabular-nums; }
+code { font: .88em var(--mono); }
+.wrap { max-width: 1020px; margin: 0 auto; padding: 0 16px 40px; }
+header { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 14px; height: 46px; padding: 0 14px; background: var(--chrome); border-bottom: 1px solid var(--rule); }
+header .lights { display: flex; gap: 7px; } header .lights i { width: 11px; height: 11px; border-radius: 50%; }
+header .lights i:nth-child(1) { background: #ff5f57; } header .lights i:nth-child(2) { background: #febc2e; } header .lights i:nth-child(3) { background: #28c840; }
+.mark { display: flex; align-items: center; gap: 9px; font: 600 14px/1 var(--mono); text-decoration: none; white-space: nowrap; }
+header nav { margin-left: auto; display: flex; gap: 2px; font: 12.5px var(--mono); }
+header nav a { color: var(--ink-2); text-decoration: none; padding: 5px 10px; border-radius: 5px; }
+header nav a:hover { background: var(--side); color: var(--ink); }
+.path { font: 12.5px var(--mono); color: var(--muted); margin: 26px 0 0; }
+.path b { color: var(--good); font-weight: 500; }
+.eyebrow { font: 500 12.5px var(--mono); color: var(--comment); margin: 34px 0 8px; }
+.eyebrow::before { content: "// "; }
+h1 { font: 600 clamp(24px, 3.6vw, 34px)/1.2 var(--mono); letter-spacing: -.03em; margin: 0 0 12px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+h2 { font: 600 18px var(--mono); letter-spacing: -.01em; margin: 40px 0 12px; display: flex; gap: 9px; }
+h2::before { content: "#"; color: var(--accent); font-weight: 500; }
+.lede { color: var(--ink-2); max-width: 74ch; margin: 0; }
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 8px; vertical-align: 1px; }
+.logo { position: relative; flex: none; display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 5px; background: #fff; box-shadow: 0 0 0 1px var(--rule); vertical-align: -6px; margin-right: 9px; }
+.logo img { width: 16px; height: 16px; object-fit: contain; display: block; }
+.logo.mono { background: var(--c); color: #fff; font: 700 9.5px/1 var(--mono); box-shadow: none; }
+.logo::after { content: ""; position: absolute; right: -3px; bottom: -3px; width: 8px; height: 8px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 2px var(--surface); }
+.logo.mono::after { display: none; }
+h1 .logo { width: 40px; height: 40px; border-radius: 9px; margin: 0; } h1 .logo img { width: 30px; height: 30px; } h1 .logo.mono { font-size: 15px; }
+h1 .logo::after { width: 11px; height: 11px; box-shadow: 0 0 0 3px var(--page); }
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-top: 24px; }
+.tile { position: relative; overflow: hidden; background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 13px 15px; }
+.tile::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 2px; background: var(--accent); opacity: .8; }
+.tile .k { font: 500 11px var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: .03em; }
+.tile .v { font: 600 26px/1.2 var(--mono); letter-spacing: -.03em; margin-top: 6px; font-variant-numeric: tabular-nums; }
 .tile .c { font-size: 13px; color: var(--ink-2); margin-top: 2px; }
-.card { background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; padding: 4px 18px; overflow-x: auto; }
+.card { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 4px 16px; overflow-x: auto; }
 table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
-th { font: 500 13px var(--body); color: var(--muted); text-align: right; padding: 12px 10px 8px; white-space: nowrap; }
-td { padding: 10px; border-top: 1px solid var(--rule); text-align: right; white-space: nowrap; }
+th { font: 500 11px var(--mono); color: var(--muted); text-align: right; padding: 12px 10px 8px; white-space: nowrap; text-transform: uppercase; letter-spacing: .03em; }
+td { padding: 9px 10px; border-top: 1px solid var(--rule); text-align: right; white-space: nowrap; font: 13px var(--mono); }
+td:first-child, td.m { font: 14px var(--body); }
 th:first-child, td:first-child { text-align: left; padding-left: 0; }
 td:last-child, th:last-child { padding-right: 0; }
 td.best { color: var(--good); font-weight: 600; }
 td small, .na { color: var(--muted); }
-dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; margin: 0; }
-dt { color: var(--muted); } dd { margin: 0; overflow-wrap: anywhere; }
-.links { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 0; }
-.links a { display: inline-block; border: 1px solid var(--rule); background: var(--surface); border-radius: 999px; padding: 4px 12px; font-size: 14px; text-decoration: none; }
+dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; margin: 0; font-size: 14.5px; }
+dt { color: var(--muted); font: 12.5px/1.9 var(--mono); } dd { margin: 0; overflow-wrap: anywhere; }
+.links { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; padding: 0; margin: 0; }
+.links a { display: inline-block; border: 1px solid var(--rule); background: var(--surface); border-radius: 6px; padding: 3px 10px; font: 12.5px var(--mono); text-decoration: none; }
 .links a:hover { border-color: var(--accent); }
 .note { color: var(--ink-2); font-size: 14px; }
-footer { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--rule); color: var(--muted); font-size: 14px; display: flex; flex-wrap: wrap; gap: 8px 20px; }
+footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--rule); color: var(--muted); font: 12px var(--mono); display: flex; flex-wrap: wrap; gap: 8px 20px; }
 """
 # The same cookieless page-view counter as the main page (see site/index.html).
 ANALYTICS = """<script async src="https://us-assets.i.posthog.com/static/array.js" onload="posthog.init('phc_yCVgdaCDPPpPV77usF3Ar7FmwDY23xfCJaDN7hHSQprt', {api_host: 'https://us.i.posthog.com', cookieless_mode: 'always', person_profiles: 'identified_only', autocapture: false, disable_session_recording: true, capture_pageleave: true})"></script>"""
 COLORS = {1: "#2a78d6", 2: "#eb6834", 3: "#1baf7a", 4: "#eda100", 5: "#e87ba4", 6: "#008300", 7: "#4a3aa7", 8: "#e34948", 9: "#8a93a3", 10: "#0b6e75"}
 color = lambda k: COLORS.get(MODELS[k].get("series"), "#8a93a3")
-MARK = '<svg width="24" height="24" viewBox="0 0 26 26" aria-hidden="true"><rect x="1" y="7" width="24" height="12" rx="6" fill="none" stroke="currentColor" stroke-width="2"/><rect x="4" y="10" width="13" height="6" rx="3" fill="currentColor"/></svg>'
+LOGOS = M.get("logos", {})
+
+
+def logo(k):
+    """The maker's logo on a white tile with the model's chart color as a corner dot, or a monogram."""
+    mk, c = MODELS[k]["maker"], color(k)
+    if mk in LOGOS:
+        return f'<span class="logo" style="--c:{c}" title="{e(mk)}"><img src="/{e(LOGOS[mk])}" alt="" loading="lazy"></span>'
+    w = mk.split()
+    return f'<span class="logo mono" style="--c:{c}" aria-hidden="true">{e((w[0][0] + w[1][0] if len(w) > 1 else w[0][:2]).upper())}</span>'
+MARK = '<svg width="20" height="20" viewBox="0 0 26 26" aria-hidden="true"><rect x="1" y="7" width="24" height="12" rx="6" fill="none" stroke="currentColor" stroke-width="2"/><rect x="4" y="10" width="13" height="6" rx="3" fill="currentColor"/></svg>'
 
 
 def page(path, title, description, body):
@@ -215,11 +245,13 @@ def page(path, title, description, body):
 {ANALYTICS}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>{CSS}</style>
 </head>
-<body><div class="wrap">
-<header><a class="mark" href="/">{MARK}System One Bench</a><nav><a href="/#leaderboard">Leaderboard</a> · <a href="/benchmarks/">Benchmarks</a></nav></header>
+<body>
+<header><span class="lights" aria-hidden="true"><i></i><i></i><i></i></span><a class="mark" href="/">{MARK}system-one-bench</a><nav><a href="/#leaderboard">leaderboard.tsv</a><a href="/benchmarks/">benchmarks/</a><a href="https://github.com/alilibx/system-one-bench">github</a></nav></header>
+<div class="wrap">
+<p class="path"><b>~/system-one-bench</b> / {e(path.strip("/") or "index")}</p>
 {body}
 <footer><span>Results under CC BY 4.0</span><a href="/">Full leaderboard</a><a href="/results.json">Raw results (JSON)</a><a href="https://github.com/alilibx/system-one-bench/blob/main/CONTRIBUTING.md">Benchmark rules</a><a href="https://github.com/alilibx/system-one-bench/releases">Releases</a><a href="https://www.linkedin.com/company/system-one-bench/">LinkedIn</a></footer>
 </div></body>
@@ -293,7 +325,7 @@ def model_page(k):
         (". An earlier run, kept for reference." if reference else ".") + \
         (f" {len(in_domain)} of the datasets it ran are in-domain: it trained on another split of them." if in_domain else "")
     body = f"""<p class="eyebrow">{e(m['maker'])} · {e(m['access'])}</p>
-<h1><span class="dot" style="background:{color(k)}"></span>{e(m['label'])}</h1>
+<h1>{logo(k)}{e(m['label'])}</h1>
 <p class="lede">{e(description)}</p>
 <div class="tiles">{''.join(tiles)}</div>
 <h2>Text datasets</h2><div class="card"><table>{head}{''.join(rows)}</table></div>
@@ -438,7 +470,7 @@ BENCH_CSS = """<style>
 td.m a { text-decoration: none; } td.m a:hover { text-decoration: underline; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
 .grid a.tile { text-decoration: none; display: block; } .grid a.tile:hover { border-color: var(--accent); }
-.grid .who { font: 700 19px/1.25 var(--display); margin-top: 6px; }
+.grid .who { font: 600 16px/1.3 var(--mono); margin-top: 8px; display: flex; align-items: center; }
 .grid .c b { color: var(--ink); font-variant-numeric: tabular-nums; }
 .tag.flag, .grid .flag { border-color: #d97706; color: #b45309; }
 .grid .flag { display: inline-block; font-size: 12px; margin-top: 6px; border: 1px solid; border-radius: 999px; padding: 0 8px; }
@@ -467,7 +499,7 @@ def bench_page(b):
                  else f'<td>{100 * val(k, s, "macro_f1", res):.1f}</td>')
         rows.append(
             f'<tr><td>{1 + sum(get(x) > a for x in ks)}</td>'
-            f'<td class="m"><span class="dot" style="background:{color(k)}"></span><a href="/models/{slugs[k]}/">{e(m["label"])}</a> <small>{e(m["maker"])}</small>{tag}</td>'
+            f'<td class="m">{logo(k)}<a href="/models/{slugs[k]}/">{e(m["label"])}</a> <small>{e(m["maker"])}</small>{tag}</td>'
             f'<td><b>{100 * a:.1f}</b></td><td><small>{100 * lo_ci:.1f}–{100 * hi_ci:.1f}</small></td>'
             f'<td><div class="bar"><i style="width:{100 * a / hi * 100:.2f}%;background:{color(k)}"></i><b style="left:{100 * lo_ci / hi * 100:.2f}%;width:{100 * (hi_ci - lo_ci) / hi * 100:.2f}%"></b></div></td>'
             f'{extra}<td>{fpct(100 * val(k, s, "ece", res))}</td><td>{val(k, s, "failed", res) or 0}</td></tr>')
@@ -511,7 +543,7 @@ def hub_page():
                   else f"tied with {e(MODELS[tied[0]]['label'])}" + (f" and {len(tied) - 1} more" if len(tied) > 1 else "") if tied
                   else "the only model so far")
         return (f'<a class="tile" href="{href}"><div class="k">{e(label)} · {e(sub)}</div>'
-                f'<div class="who"><span class="dot" style="background:{color(ks[0])}"></span>{e(MODELS[ks[0]]["label"])}</div>'
+                f'<div class="who">{logo(ks[0])}{e(MODELS[ks[0]]["label"])}</div>'
                 f'<div class="c"><b>{scale * get(ks[0]):.1f}</b> · {status} · {len(ks)} model{"s" if len(ks) != 1 else ""}</div>'
                 + (f'<div class="flag">Unusually high for this model</div>' if flag else "") + "</a>")
 
