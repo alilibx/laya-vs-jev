@@ -27,7 +27,7 @@ jobs:
       - name: Assemble site
         run: |
           mkdir _site
-          cp site/* _site/
+          cp -r site/* _site/
           cp results.json results_vision.json _site/
           python3 .github/scripts/build_pages.py _site
           python3 -c "import json; [json.load(open(f'_site/{f}')) for f in ('results.json', 'results_vision.json', 'meta.json')]"
