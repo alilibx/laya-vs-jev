@@ -18,7 +18,8 @@ pull request that shipped them.
   model's name find its results.
 - [x] Analytics that respect privacy, to see which channels bring readers: page views only, no cookies.
 - [ ] A short technical report on arXiv: the method (frozen data, identical requests, calibration, latency from one
-  machine) and the findings, such as what reading text from pixels costs in Arabic.
+  machine) and the findings, such as what reading text from pixels costs in Arabic. The draft is in
+  [paper/](../paper/) (LaTeX), with a Word copy at [docs/system-one-bench-report.docx](system-one-bench-report.docx).
 - [ ] Results and per-case predictions as a Hugging Face dataset, and a leaderboard Space. Only data whose licence
   allows redistribution.
 

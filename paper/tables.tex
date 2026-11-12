@@ -1,0 +1,72 @@
+\begin{table}[t]\centering\small
+\caption{Datasets. $n$ is the number of cases; typed decisions asks 5 questions per case.}\label{tab:data}
+\begin{tabular}{llrp{8cm}}\toprule Dataset & Language & $n$ & Question \\ \midrule
+AG News & English & 200 & News topic, 4 options \\
+SST-2 & English & 200 & Movie review sentiment, yes/no \\
+SST-5 & English & 200 & Sentiment on a 5-level score \\
+DAIR Emotion & English & 200 & Emotion, 6 options \\
+Banking77 & English & 200 & Banking intent, 77 options \\
+BoolQ & English & 200 & Reading comprehension, yes/no \\
+XNLI English & English & 150 & Does one sentence follow from another, 3 options \\
+Typed decisions & English & 400 & Agent and product states, 5 questions per case \\
+XNLI French & French & 150 & Does one sentence follow from another, 3 options \\
+XNLI Arabic & Arabic & 150 & Does one sentence follow from another, 3 options \\
+MASSIVE scenario & Arabic & 200 & Assistant request scenario, 18 options \\
+MASSIVE intent & Arabic & 200 & Assistant request intent, 20 options \\
+OSACT4 offensive & Arabic & 200 & Offensive tweet, yes/no \\
+Tweet sentiment & Arabic & 200 & Sentiment, 3 options \\
+MIRACL rerank & Arabic & 200 & Pick the relevant passage out of 8 \\
+MIRACL pairwise & Arabic & 200 & Is this passage relevant, yes/no \\
+\midrule
+SST-2, as an image & image & 200 & The 200 SST-2 reviews rendered as a picture, yes/no \\
+Arabic sentiment, as an image & image & 200 & The 200 Arabic tweets rendered as a picture, 3 options \\
+Oxford-IIIT Pet & image & 200 & Cat or dog breed from a photo, 37 options \\
+VQAv2 yes/no & image & 200 & A yes/no question about a photo \\
+CountBench & image & 200 & How many objects, 2 to 10, as a 9-level score \\
+RefCOCO & image & 200 & Box the person or object a phrase describes, 100 people and 100 objects \\
+\bottomrule\end{tabular}\end{table}
+
+\begin{table*}[t]\centering\small
+\caption{Text track, ranked by the System One Index (mean accuracy over the 16 datasets, equal weight). $\pm$ is a 95\% interval from binomial sampling error. Calibration is top-label ECE. Latency is the median per call through OpenRouter, timed from one machine, except for the 9 open-weight models run locally. Failed answers count as wrong. Best value per column in bold; latency compares API models only.}\label{tab:text}
+\resizebox{\textwidth}{!}{\begin{tabular}{rllrrrrrrr}\toprule \# & Model & Maker & Index & English & Arabic & ECE (\%) & Median ms & \$ / 1k calls & Failed \\ \midrule
+1 & Decider V1.1 27B & Perplexity & \textbf{83.4} $\pm$1.2 & 81.1 & \textbf{85.0} & 5.7 & 263 & \$0.009 & 0 \\
+2 & d1 & Liquid AI & 82.7 $\pm$1.3 & 81.3 & 83.9 & 2.9 & 188 & \$0.015 & 0 \\
+3 & Mercury Decide & Inception & 82.4 $\pm$1.3 & \textbf{83.7} & 80.8 & 13.1 & 276 & free & 0 \\
+4 & Microsoft-Decision-1 & Microsoft & 82.0 $\pm$1.3 & 81.0 & 83.2 & 2.8 & 240 & \$0.010 & 0 \\
+5 & Clef & Cloudflare & 81.6 $\pm$1.3 & 80.6 & 83.0 & \textbf{2.2} & 310 & \$0.116 & 0 \\
+6 & Clef Flash & Cloudflare & 80.3 $\pm$1.3 & 80.2 & 80.5 & 3.5 & 267 & \$0.044 & 0 \\
+7 & Clef Omni & Cloudflare & 79.7 $\pm$1.3 & 78.6 & 80.5 & 3.4 & 208 & \$0.074 & 0 \\
+8 & Jev 1.14 & TypeSafe & 79.3 $\pm$1.4 & 78.8 & 80.3 & 6.0 & \textbf{136} & \$0.028 & 0 \\
+9 & Jev 1.13 & TypeSafe & 79.0 $\pm$1.4 & 78.5 & 79.9 & 6.1 & 150 & \$0.028 & 0 \\
+10 & d1-3B & Liquid AI & 78.4 $\pm$1.4 & 78.4 & 78.3 & 2.4 & 1{,}134$^\ddagger$ & local & 0 \\
+11 & d3 nano & vLLM Semantic Router & 78.0 $\pm$1.4 & 77.9 & 76.9 & 7.0 & 1{,}167$^\ddagger$ & local & 0 \\
+12 & Drex v1.5 & Nace AI & 77.6 $\pm$1.4 & 77.6 & 77.0 & 10.8 & 198 & \$0.010 & 0 \\
+13 & Kev 4B & Jared Palmer & 76.8 $\pm$1.4 & 78.3 & 74.8 & 5.1 & 552 & \$0.010 & 0 \\
+14 & GPT-6 Luna Decisions & OpenAI & 76.0 $\pm$1.4 & 75.2 & 78.8 & 9.8 & 215 & \$0.040 & 2 \\
+15 & d3 lite & vLLM Semantic Router & 74.9 $\pm$1.4 & 74.3 & 74.7 & 7.1 & 620$^\ddagger$ & local & 0 \\
+16 & Tev1 4B Experimental & Together AI & 71.5 $\pm$1.4 & 66.4 & 75.8 & 5.3 & 232 & \$0.019 & 200 \\
+17 & Solar Decide & Upstage & 68.8 $\pm$1.5 & 64.7 & 73.7 & 20.3 & 715 & \$0.042 & 200 \\
+18 & d3 edge & vLLM Semantic Router & 65.9 $\pm$1.6 & 69.1 & 62.2 & 18.7 & 294$^\ddagger$ & local & 0 \\
+19 & d1-omni-600M & Liquid AI & 65.2 $\pm$1.6 & 75.5 & 53.4 & 9.8 & 251$^\ddagger$ & local & 0 \\
+20 & Kev 0.8B & Jared Palmer & 63.6 $\pm$1.6 & 71.0 & 54.9 & 4.3 & 705$^\ddagger$ & local & 0 \\
+21 & Solar Decide Flash & Upstage & 63.6 $\pm$1.5 & 61.3 & 66.5 & 14.4 & 586 & \$0.042 & 200 \\
+22 & Naluri-308M & Jericho Siahaya & 61.0 $\pm$1.6 & 59.3 & 61.9 & 5.7 & 189$^\ddagger$ & local & 0 \\
+23 & Laya Router & Convai Innovations & 60.4 $\pm$1.5 & 64.7 & 53.2 & 20.0 & 75$^\dagger$ & local & 0 \\
+24 & Naluri-279M & Jericho Siahaya & 50.4 $\pm$1.6 & 52.6 & 50.7 & 8.3 & 138$^\ddagger$ & local & 0 \\
+\bottomrule\end{tabular}}
+\\[2pt]\footnotesize $^\dagger$Local, one call at a time on an Apple M5 GPU. $^\ddagger$Local, one call at a time on a 4-vCPU cloud CPU (llama.cpp Q8\_0, or PyTorch for Naluri). Neither is comparable with API latency.
+\end{table*}
+
+\begin{table*}[t]\centering\small
+\caption{Vision track, ranked by the Vision Index (mean accuracy over the 5 image datasets). Text rank is the model's place on the System One Index in Table~\ref{tab:text}.}\label{tab:vision}
+\resizebox{\textwidth}{!}{\begin{tabular}{rlrrrrrrrr}\toprule \# & Model & Vision Index & SST-2 & Arabic sentiment & Oxford-IIIT Pet & VQAv2 yes/no & CountBench & ECE (\%) & Text rank \\ \midrule
+1 & Jev 1.14 & 85.1 & 93.5 & 63.5 & 88.5 & 86.5 & 93.5 & 2.9 & 8 \\
+2 & Jev 1.13 & 83.9 & 94.5 & 59.0 & 83.5 & 88.0 & 94.5 & 2.8 & 9 \\
+3 & Decider V1.1 27B & 83.0 & 96.0 & 51.0 & 84.0 & 89.5 & 94.5 & 5.6 & 1 \\
+4 & GPT-6 Luna Decisions & 81.6 & 88.5 & 67.0 & 87.0 & 80.5 & 85.0 & 5.3 & 14 \\
+5 & Mercury Decide & 79.4 & 93.0 & 39.0 & 84.5 & 87.0 & 93.5 & 9.9 & 3 \\
+6 & Clef & 78.1 & 95.5 & 35.0 & 82.5 & 87.5 & 90.0 & 3.6 & 5 \\
+7 & Clef Flash & 78.0 & 95.5 & 33.5 & 85.0 & 88.0 & 88.0 & 9.4 & 6 \\
+8 & Clef Omni & 72.2 & 89.5 & 28.5 & 88.0 & 87.0 & 68.0 & 20.6 & 7 \\
+\bottomrule\end{tabular}}\end{table*}
+
